@@ -4,6 +4,12 @@ import ECardType from "./ECardType";
 
 import { v4 as uuidv4 } from 'uuid';
 
+export interface ISerializedBacklog {
+    boardName: string,
+    cardsAPIVersion: string,
+    backlog: Array<ICardData>
+}
+
 /**
  * API to interact with CARD'S
  * todo: This API for the most part never throws exceptions or notifies the user when things are going wrong.. think if something needs to be done.. (syncing back and front end is not an issue atleast in 1.0.0) 
@@ -22,6 +28,12 @@ export default class CardsAPI {
      * ! This must also be manually kept in sync
      */
     public setCardsData: React.Dispatch<React.SetStateAction<ICardData[]>> = null;
+
+    /**
+     * The current version of the CardsAPI
+     * ? things serializing and deserializing might break between major versions
+     */
+    public cardsAPIVersion: string = "1.0.0";
 
     /**
      * API to add a new card
@@ -174,6 +186,30 @@ export default class CardsAPI {
      */
     public getCardState(uuid: string): ECardState | undefined {
         return this.getCardData(uuid)?.state || undefined;
+    }
+
+    /**
+     * Serializes the entire backlog into a json string
+     * @param boardName: is the name of this board which is being serialized
+     * @returns a string which contains the entire backlog of cards in JSON format
+     */
+    public serialize(boardName: string): string {
+        const serializableObject: ISerializedBacklog = {
+            boardName,
+            cardsAPIVersion: this.cardsAPIVersion,
+            backlog: this.cardsData
+        }
+        return JSON.stringify(serializableObject, null, 4);
+    }
+
+    /**
+     * Generates the entire backlog from a json string
+     */
+    public deSerialize(jsonString: string): void {
+        const backlog: ISerializedBacklog = JSON.parse(jsonString);
+        backlog.backlog.forEach((cardData) => {
+            this.addCard(cardData);
+        });
     }
 }
 export const cardsApiObj = new CardsAPI();
