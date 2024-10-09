@@ -10,6 +10,7 @@
     "@dnd-kit/core": "^6.1.0",
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
+    "bulma": "^1.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "uuid": "^10.0.0"
@@ -18,6 +19,7 @@
     "@parcel/transformer-sass": "^2.12.0",
     "@types/uuid": "^10.0.0",
     "parcel": "^2.12.0",
-    "process": "^0.11.10"
+    "process": "^0.11.10",
+    "typescript-plugin-css-modules": "^5.1.0"
   }
 }
