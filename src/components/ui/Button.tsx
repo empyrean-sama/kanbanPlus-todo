@@ -34,6 +34,7 @@ export default function Button({type, size, isFullwidth, isOutlined, isInverted,
     const buttonRounded = (isRounded)? "is-rounded" : "";
     const buttonStatic = (isStatic)? "is-static" : "";
     const customClassNameString = (buttonAttributes.className) ? buttonAttributes.className : "";
+    delete buttonAttributes.className;
 
     return (
         <button 
