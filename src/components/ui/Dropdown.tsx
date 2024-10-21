@@ -2,12 +2,12 @@ import React, { HTMLAttributes, PropsWithChildren, ReactNode, useContext, useSta
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import Style from './Dropdown.module.scss';
 
-interface IDropdownContext {
+export interface IDropdownContext {
     activeChildId: string,
     setActiveChildId: React.Dispatch<React.SetStateAction<string>>
     closeDropdown: () => void
 }
-const dropdownContext = React.createContext<IDropdownContext | undefined>(undefined);
+export const dropdownContext = React.createContext<IDropdownContext | undefined>(undefined);
 
 export function Dropdown({placeholder, children}: {placeholder: string, children?: ReactNode}) {
 
