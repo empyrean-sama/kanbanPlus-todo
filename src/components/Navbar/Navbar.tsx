@@ -1,10 +1,10 @@
 import React, { createContext, HTMLAttributes, useState } from 'react';
 import Style from './Navbar.module.scss';
-import Button, { EButtonType } from './ui/Button';
+import Button, { EButtonType } from '../ui/Button';
 
 import { FaDownload, FaUpload } from "react-icons/fa";
-import { Dropdown, DropdownDivider, DropdownItem } from './ui/Dropdown';
-import CreateNewBoard from './Navbar/CreateBoard';
+import { Dropdown, DropdownDivider, DropdownItem } from '../ui/Dropdown';
+import CreateNewBoard from './CreateBoard';
 
 export interface INavbarContext {
     addNewBoard: (boardName: string) => boolean

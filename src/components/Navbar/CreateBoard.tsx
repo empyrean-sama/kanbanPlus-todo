@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import Button, { EButtonType } from '../ui/Button';
 import { DropdownItem, dropdownContext, IDropdownContext } from '../ui/Dropdown';
-import { INavbarContext, navbarContext } from '../Navbar';
+import { INavbarContext, navbarContext } from './Navbar';
 
 import Style from './CreateBoard.module.scss';
 import { FaPlus } from 'react-icons/fa6';
