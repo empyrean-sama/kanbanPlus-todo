@@ -1,6 +1,6 @@
-import React, { ComponentProps, HTMLAttributes, PropsWithChildren, ReactNode } from 'react';
+import React, { ButtonHTMLAttributes, PropsWithChildren } from 'react';
 
-export enum EButtonType {
+export enum EButtonFace {
     primary = 'is-primary',
     link = 'is-link',
     info = "is-info",
@@ -23,22 +23,31 @@ export enum EButtonSize {
     large = 'is-large'
 }
 
-export default function Button({type, size, isFullwidth, isOutlined, isInverted, isRounded, isStatic, children, ...buttonAttributes}: {
-    type?: EButtonType, size?: EButtonSize, isFullwidth?: boolean, isOutlined?: boolean, isInverted?: boolean, isRounded?: boolean, isStatic?: boolean, children?: ReactNode } & HTMLAttributes<HTMLButtonElement>
-) {
-    const buttonType = type || EButtonType.primary;
+export interface IButtonProps {
+    face? : EButtonFace, 
+    size? : EButtonSize, 
+    isFullwidth? : boolean, 
+    isOutlined? : boolean, 
+    isInverted? : boolean, 
+    isRounded? : boolean, 
+    isStatic? : boolean
+}
+
+export default function Button(props: PropsWithChildren<IButtonProps> & ButtonHTMLAttributes<HTMLButtonElement>) {
+    const {face, size, isFullwidth, isOutlined, isInverted, isRounded, isStatic, children, ...buttonAttributes} = props;
+    const buttonFace = face || EButtonFace.primary;
     const buttonSize = size || EButtonSize.normal;
-    const buttonWidth = (isFullwidth)? "is-fullwidth" : "";
-    const buttonOutlined = (isOutlined)? "is-outlined" : "";
-    const buttonInverted = (isInverted)? "is-inverted" : "";
-    const buttonRounded = (isRounded)? "is-rounded" : "";
-    const buttonStatic = (isStatic)? "is-static" : "";
+    const buttonWidth    = (isFullwidth)? "is-fullwidth" : "";
+    const buttonOutlined = (isOutlined) ? "is-outlined"  : "";
+    const buttonInverted = (isInverted) ? "is-inverted"  : "";
+    const buttonRounded  = (isRounded)  ? "is-rounded"   : "";
+    const buttonStatic   = (isStatic)   ? "is-static"    : "";
     const customClassNameString = (buttonAttributes.className) ? buttonAttributes.className : "";
     delete buttonAttributes.className;
 
     return (
         <button 
-            className={`button ${buttonType} ${buttonSize} ${buttonWidth} ${buttonOutlined} ${buttonInverted} ${buttonRounded} ${buttonStatic} ${customClassNameString}`}
+            className={`button ${buttonFace} ${buttonSize} ${buttonWidth} ${buttonOutlined} ${buttonInverted} ${buttonRounded} ${buttonStatic} ${customClassNameString}`}
             {...buttonAttributes}
         >
             {children}

@@ -1,5 +1,5 @@
 import React, { createContext, HTMLAttributes, PropsWithChildren, useContext } from 'react';
-import Button, { EButtonType } from './Button';
+import Button, { EButtonFace } from './Button';
 
 export interface IModalProps {
     isOpen: boolean;
@@ -49,15 +49,23 @@ export function ModalHeader({title, children}: PropsWithChildren<IModalHeaderPro
     );
 }
 
+export interface IModalFooterProps {
+    /** Disables the DEFAULT success button if dawn */
+    isSuccessDisabled? : boolean, 
+
+    /** Disables the DEFAULT failure button if drawn */
+    isFailureDisabled? : boolean 
+}
+
 /**
  * This component is used to create the footer of a modal
  * ? This component must always have as its parent a Modal component
- * @param props : will try to draw the default cancel and success buttons based on the callba
- * @returns 
+ * @param props : will not draw the default Accept and Cancel buttons if any children are present
+ * @returns a ModalFooter react component
  */
-export function ModalFooter({children, ...htmlAttributes}: PropsWithChildren<HTMLAttributes<HTMLElement>>) {
+export function ModalFooter(props: PropsWithChildren<IModalFooterProps> & HTMLAttributes<HTMLElement>) {
     const {onSuccess, onFailure} = useContext(modalContext) as IModalContext
-
+    const {isSuccessDisabled, isFailureDisabled, children, ...htmlAttributes} = props;
     if(!children && !onSuccess && !onFailure) {
         console.error('Error in modal footer, either onSuccess, onFailure or custom children must be defined to close the modal, currently this modal cannot be closed by any end user');
     }
@@ -69,8 +77,8 @@ export function ModalFooter({children, ...htmlAttributes}: PropsWithChildren<HTM
         return(
             <footer className={className} {...htmlAttributes}>
                 <div className="buttons">
-                    {onSuccess ? <Button type={EButtonType.primary} onClick={() => onSuccess(new ModalEventArgs())}>Accept</Button> : undefined }
-                    {onFailure ? <Button type={EButtonType.danger}  onClick={() => onFailure(new ModalEventArgs())}>Cancel</Button> : undefined }
+                    {onSuccess ? <Button face={EButtonFace.primary} disabled={!!isSuccessDisabled} onClick={() => onSuccess(new ModalEventArgs())}>Accept</Button> : undefined }
+                    {onFailure ? <Button face={EButtonFace.danger}  disabled={!!isFailureDisabled}  onClick={() => onFailure(new ModalEventArgs())}>Cancel</Button> : undefined }
                 </div>
             </footer>
         )
@@ -90,7 +98,9 @@ export function ModalBody({children, ...htmlAttributes}: PropsWithChildren<HTMLA
 
     return (
         <section className={className} {...htmlAttributes}>
-            {children}
+            <div className="content">
+                {children}
+            </div>
         </section>
     );
 }

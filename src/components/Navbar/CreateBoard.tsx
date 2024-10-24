@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import Button, { EButtonType } from '../ui/Button';
+import Button, { EButtonFace } from '../ui/Button';
 import { DropdownItem, dropdownContext, IDropdownContext } from '../ui/Dropdown';
 import { INavbarContext, navbarContext } from './Navbar';
 
@@ -39,7 +39,7 @@ export default function CreateNewBoard() {
     return (
         <DropdownItem id="create-board" className={Style['flex']} selectable={false}>
             <input value={inputValue} onChange={handleInputChanged} className={`input mr-4 ${inputInDanger ? 'is-danger' : ''}`} type="text" placeholder="New Board Name" />
-            <Button type={EButtonType.link} onClick={handleAddNewBoard}><FaPlus /></Button>
+            <Button face={EButtonFace.link} onClick={handleAddNewBoard}><FaPlus /></Button>
         </DropdownItem>
     )
 }

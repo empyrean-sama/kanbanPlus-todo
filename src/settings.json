@@ -1,3 +1,6 @@
 {
-    "debug": true
+    "debug": true,
+    "cardsMajorVersionNumber": 1,
+    "cardsMinorVersionNumber": 0,
+    "cardsFixesVersionNumber": 0
 }

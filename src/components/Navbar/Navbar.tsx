@@ -1,13 +1,15 @@
 import React, { createContext, HTMLAttributes, useState } from 'react';
 import Style from './Navbar.module.scss';
-import Button, { EButtonType } from '../ui/Button';
+import Button, { EButtonFace } from '../ui/Button';
 
 import { FaDownload, FaUpload } from "react-icons/fa";
 import { Dropdown, DropdownDivider, DropdownItem } from '../ui/Dropdown';
 import CreateNewBoard from './CreateBoard';
+import DownloadProject from './DownloadProject';
 
 export interface INavbarContext {
-    addNewBoard: (boardName: string) => boolean
+    addNewBoard: (boardName: string) => boolean,
+    getAllBoardIds: () => Array<string>
 }
 export const navbarContext = createContext<INavbarContext | undefined>(undefined);
 
@@ -28,8 +30,12 @@ export default function Navbar({...navAttributes}: HTMLAttributes<HTMLElement>) 
         return false;
     }
 
+    function getAllBoardIds() : Array<string> {
+        return boardIds;
+    }
+
     return(
-        <navbarContext.Provider value={{addNewBoard}}>
+        <navbarContext.Provider value={{addNewBoard, getAllBoardIds}}>
             <nav className="navbar is-dark px-2">
                 <div className="navbar-brand">
                     <h1 className={`${Style["logo-text"]}`}>KanbanPlus-Todo</h1>
@@ -46,8 +52,8 @@ export default function Navbar({...navAttributes}: HTMLAttributes<HTMLElement>) 
                         </Dropdown>
                     </div>
                     <div className='navbar-end'>
-                    <Button className='mr-4' type={EButtonType.link}><span className="mr-2">Upload</span><FaUpload /></Button>
-                    <Button><span className="mr-2">Download Project</span><FaDownload /></Button>
+                    <Button className='mr-4' face={EButtonFace.link}><span className="mr-2">Upload</span><FaUpload /></Button>
+                    <DownloadProject />
                     </div>
                 </div>
             </nav>

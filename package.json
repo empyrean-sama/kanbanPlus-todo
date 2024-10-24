@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "@parcel/transformer-sass": "^2.12.0",
+    "@types/streamsaver": "^2.0.5",
     "parcel": "^2.12.0",
     "process": "^0.11.10"
   },
@@ -17,6 +18,7 @@
     "bulma": "^1.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-icons": "^5.3.0"
+    "react-icons": "^5.3.0",
+    "streamsaver": "^2.0.6"
   }
 }
