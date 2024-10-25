@@ -8,12 +8,15 @@ import { INavbarContext, navbarContext } from './Navbar';
 import { getCardsAPIVersion } from '../../utilities/cardsAPIUtils';
 import Settings from '../../settings.json';
 import download from '../../utilities/download';
-import { FaDownload } from "react-icons/fa";
+import { FaDownload } from "react-icons/fa6";
 import { IMessageService, messageServiceContext, EMessageType } from '../Message/MessageService';
+
+import IProject from '../../interface/IProject';
+import IBoard from '../../interface/IBoard';
 
 export default function DownloadProject() {
     
-    const { getAllBoardIds } = useContext(navbarContext) as INavbarContext;
+    const { getBoards } = useContext(navbarContext) as INavbarContext;
     const { showMessage } = useContext(messageServiceContext) as IMessageService;
     
     const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +24,7 @@ export default function DownloadProject() {
     const [selectedBoards, setSelectedBoards] = useState<Array<string>>([]);
     
     function onClick() {
-        const allBoards = getAllBoardIds();
+        const allBoards = getBoards();
         if(allBoards.length > 0) {
             setIsOpen(true);
         }
@@ -31,15 +34,20 @@ export default function DownloadProject() {
     }
 
     function onSuccess() {
-        const jsonObject: any = {
+        // Create a project file and populate it with all boards
+        const projectFile: IProject = {
             projectName: inputValue,
             cardsAPIVersion: getCardsAPIVersion(),
-            boards: {}
+            boards: []
         };
         selectedBoards.forEach((boardId) => {
-            jsonObject.boards[boardId] = [];
-        })
-        download(`${inputValue}.json`, JSON.stringify(jsonObject));
+            const board: IBoard = {
+                name: boardId
+            };
+            projectFile.boards.push(board);
+        });
+
+        download(`${inputValue}.json`, JSON.stringify(projectFile));
         setIsOpen(false);
     }
 
@@ -69,14 +77,14 @@ export default function DownloadProject() {
 
                     <h2>Include Boards</h2>
                     <div className='checkboxes'>
-                        {getAllBoardIds().map((boardId) => <Checkbox key={boardId} onCheckChanged={(checked) => handleBoardOnCheckChanged(checked, boardId)}> {boardId} </Checkbox>)}
+                        {getBoards().map((boardId) => <Checkbox key={boardId} onCheckChanged={(checked) => handleBoardOnCheckChanged(checked, boardId)}> {boardId} </Checkbox>)}
                     </div>
 
                     <h3>Details</h3>
                     <p>Cards API Version: <b><span className='has-text-primary'>{Settings.cardsMajorVersionNumber}</span>.{Settings.cardsMinorVersionNumber}.{Settings.cardsFixesVersionNumber}</b> <br></br> This project will not be compatible on clients with a different <b className='has-text-primary'>Major</b> version number.</p>
                     
                 </ModalBody>
-                <ModalFooter isSuccessDisabled={inputValue === "" || selectedBoards.length === 0}/>
+                <ModalFooter isSuccessDisabled={inputValue.trim().length === 0 || selectedBoards.length === 0}/>
             </Modal>
         </>
     );

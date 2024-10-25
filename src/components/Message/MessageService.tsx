@@ -19,7 +19,7 @@ export interface IMessageService {
      * @param messageType: The type of this message, the default value is information
      * @returns nothing
      */
-    showMessage: (heading: string, message: string, messageType?: EMessageType) => void
+    showMessage(heading: string, message: string, messageType?: EMessageType): void
 }
 export const messageServiceContext = createContext<IMessageService | undefined>({showMessage(heading, message, messageType) {
     console.error(`message contents: heading: ${heading}, message: ${message}, messageType: ${messageType}, this is a call to the dummy showMessage, must never call this`);
