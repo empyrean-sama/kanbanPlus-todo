@@ -2,5 +2,8 @@
     "debug": true,
     "cardsMajorVersionNumber": 1,
     "cardsMinorVersionNumber": 0,
-    "cardsFixesVersionNumber": 0
+    "cardsFixesVersionNumber": 0,
+    "notificationDisplayTime": 2500,
+    "messageServiceTickInterval": 20,
+    "maximumMessagesDisplayed": 4
 }

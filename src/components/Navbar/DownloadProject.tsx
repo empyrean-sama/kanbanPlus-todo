@@ -9,10 +9,12 @@ import { getCardsAPIVersion } from '../../utilities/cardsAPIUtils';
 import Settings from '../../settings.json';
 import download from '../../utilities/download';
 import { FaDownload } from "react-icons/fa";
+import { IMessageService, messageServiceContext, EMessageType } from '../Message/MessageService';
 
 export default function DownloadProject() {
     
     const { getAllBoardIds } = useContext(navbarContext) as INavbarContext;
+    const { showMessage } = useContext(messageServiceContext) as IMessageService;
     
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
@@ -22,6 +24,9 @@ export default function DownloadProject() {
         const allBoards = getAllBoardIds();
         if(allBoards.length > 0) {
             setIsOpen(true);
+        }
+        else {
+            showMessage("No Boards", "Atleast one board must exist before attempting to export the project", EMessageType.danger);
         }
     }
 
