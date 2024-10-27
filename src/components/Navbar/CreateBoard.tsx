@@ -20,7 +20,6 @@ export default function CreateNewBoard() {
             }
             else {
                 setActiveChildId(inputValue);
-                closeDropdown();
                 setInputValue('');
             }
         }

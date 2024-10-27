@@ -1,0 +1,24 @@
+.space-out {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dropdown-controls {
+    display: flex;
+}
+
+.icon {
+    transition: color .2s ease-in-out;
+}
+.delete-icon:hover {
+    color: var(--color-danger);
+}
+.edit-icon:hover {
+    color: var(--color-warning);
+}
+.erase-icon:hover {
+    color: var(--color-danger);
+}
+.commit-icon:hover {
+    color: var(--color-success);
+}
