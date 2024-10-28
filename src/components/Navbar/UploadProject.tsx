@@ -11,7 +11,7 @@ import IBoard from '../../interface/IBoard';
 
 export default function UploadProject() {
     const { showMessage } = useContext(messageServiceContext) as IMessageService;
-    const { getBoards, clearBoards, addNewBoard } = useContext(navbarContext) as INavbarContext;
+    const { getBoards, clearBoards, addNewBoard, clearDropdownActiveChild } = useContext(navbarContext) as INavbarContext;
     const [ modalOpen, setModalOpen ] = useState(false);
 
     function onClick() {
@@ -48,6 +48,7 @@ export default function UploadProject() {
                 const project: IProject = JSON.parse(text) as IProject;
                 const boards = project.boards.map((board) => board.name);
                 clearBoards();
+                clearDropdownActiveChild();
                 boards.forEach((board) => addNewBoard(board));
             }
             catch{

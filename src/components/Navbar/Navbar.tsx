@@ -40,6 +40,11 @@ export interface INavbarContext {
      * @param id of the board to be deleted
      */
     deleteBoard(id: string): void
+
+    /**
+     * Clear the active child on the dropdown
+     */
+    clearDropdownActiveChild(): void
 }
 export const navbarContext = createContext<INavbarContext | undefined>(undefined);
 
@@ -83,8 +88,12 @@ export default function Navbar({...navAttributes}: HTMLAttributes<HTMLElement>) 
         }
     }
 
+    function clearDropdownActiveChild() {
+        boardsDropdownRef.current?.clearActiveChild();
+    }
+
     return(
-        <navbarContext.Provider value={{addNewBoard, getBoards, clearBoards, replaceBoard, deleteBoard}}>
+        <navbarContext.Provider value={{addNewBoard, getBoards, clearBoards, replaceBoard, deleteBoard, clearDropdownActiveChild}}>
             <nav className="navbar is-dark px-2">
                 <div className="navbar-brand">
                     <h1 className={`${Style["logo-text"]}`}>KanbanPlus-Todo</h1>
