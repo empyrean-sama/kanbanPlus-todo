@@ -19,7 +19,6 @@ export default function CreateNewBoard() {
                 setInputInDanger(true);
             }
             else {
-                setActiveChildId(inputValue);
                 setInputValue('');
             }
         }

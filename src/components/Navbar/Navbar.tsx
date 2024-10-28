@@ -1,9 +1,9 @@
-import React, { createContext, HTMLAttributes, useState } from 'react';
+import React, { createContext, HTMLAttributes, useRef, useState } from 'react';
 import Style from './Navbar.module.scss';
 import Button, { EButtonFace } from '../ui/Button';
 
 import { FaDownload, FaUpload } from "react-icons/fa";
-import { Dropdown, DropdownDivider, DropdownItem } from '../ui/Dropdown';
+import { Dropdown, DropdownDivider, DropdownItem, IDropdownImperativeHandle } from '../ui/Dropdown';
 import CreateNewBoard from './CreateBoard';
 import DownloadProject from './DownloadProject';
 import UploadProject from './UploadProject';
@@ -41,6 +41,7 @@ export const navbarContext = createContext<INavbarContext | undefined>(undefined
 
 export default function Navbar({...navAttributes}: HTMLAttributes<HTMLElement>) {
     const [boardIds, setBoardIds] = useState<Array<string>>([]);
+    const boardsDropdownRef = useRef<IDropdownImperativeHandle>(null);
 
     function addNewBoard(boardName: string): boolean {
         const foundBoardWithSameId: boolean = !!(boardIds.find((value) => value === boardName));
@@ -63,6 +64,9 @@ export default function Navbar({...navAttributes}: HTMLAttributes<HTMLElement>) 
         let replacedBoard = false;
         if(!boardIds.find((boardId: string) => boardId === newId)) {
             setBoardIds((prevState) => [...prevState.map((i) => (i === id? newId: i))]);
+            if(boardsDropdownRef.current?.getActiveChildId() === id) {
+                boardsDropdownRef.current?.setActiveChild(newId);
+            }
             replacedBoard = true;
         }
         return replacedBoard;
@@ -79,7 +83,7 @@ export default function Navbar({...navAttributes}: HTMLAttributes<HTMLElement>) 
                         
                     </div>
                     <div className='navbar-middle'>
-                        <Dropdown placeholder='Select A Board To View'>
+                        <Dropdown placeholder='Select A Board To View' ref={boardsDropdownRef}>
                             {boardIds.map((id) => <BoardDropdownItem id={id} key={`board dropdown item ${id}`} />)}
                             <DropdownDivider />
                             <CreateNewBoard />

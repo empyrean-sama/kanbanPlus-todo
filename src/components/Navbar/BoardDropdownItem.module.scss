@@ -1,10 +1,13 @@
 .space-out {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    column-gap: var(--spacing-03);
 }
 
 .dropdown-controls {
     display: flex;
+    align-items: flex-end;
 }
 
 .icon {

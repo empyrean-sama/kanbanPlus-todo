@@ -1,6 +1,10 @@
-import React, { HTMLAttributes, PropsWithChildren, ReactNode, useContext, useState } from "react"
+import React, { HTMLAttributes, PropsWithChildren, ReactNode, useContext, useState, useImperativeHandle, forwardRef } from "react"
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import Style from './Dropdown.module.scss';
+
+export interface IDropdownProps {
+    placeholder: string
+}
 
 export interface IDropdownContext {
     activeChildId: string,
@@ -9,10 +13,30 @@ export interface IDropdownContext {
 }
 export const dropdownContext = React.createContext<IDropdownContext | undefined>(undefined);
 
-export function Dropdown({placeholder, children}: {placeholder: string, children?: ReactNode}) {
+export interface IDropdownImperativeHandle {
+    clearActiveChild(): void;
+    setActiveChild(childId: string): void;
+    getActiveChildId(): string
+}
+
+export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<IDropdownProps>>(function({placeholder, children}, ref) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [activeChildId, setActiveChildId] = useState("");
+
+    useImperativeHandle(ref, () => {
+        return {
+            clearActiveChild() {
+                setActiveChildId("");
+            },
+            setActiveChild(childId: string) {
+                setActiveChildId(childId);
+            },
+            getActiveChildId(): string {
+                return activeChildId;
+            },
+        }
+    }, [activeChildId]);
 
     function closeDropdown() {
         setIsOpen(false);
@@ -37,7 +61,7 @@ export function Dropdown({placeholder, children}: {placeholder: string, children
             </div>
         </div>
     );
-}
+});
 
 export function DropdownItem({id, selectable, children, className}: {id: string, selectable?: boolean, children?: ReactNode, className?: string | undefined}) {
 
