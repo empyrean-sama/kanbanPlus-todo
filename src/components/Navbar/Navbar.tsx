@@ -86,8 +86,8 @@ export default function Navbar({...navAttributes}: HTMLAttributes<HTMLElement>) 
                         </Dropdown>
                     </div>
                     <div className='navbar-end'>
-                    <UploadProject />
-                    <DownloadProject />
+                        <UploadProject />
+                        <DownloadProject />
                     </div>
                 </div>
             </nav>
