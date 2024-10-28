@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { DropdownItem } from '../ui/Dropdown';
+import Modal, {ModalHeader, ModalBody, ModalFooter} from '../ui/Modal';
 
 import { INavbarContext, navbarContext } from './Navbar';
 
@@ -12,10 +13,11 @@ import Style from './BoardDropdownItem.module.scss';
 
 export default function BoardDropdownItem({id}: {id: string}) {
 
-    const { replaceBoard } = useContext(navbarContext) as INavbarContext;
+    const { replaceBoard, deleteBoard } = useContext(navbarContext) as INavbarContext;
     const [isEditable, setIsEditable] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [inputInError, setInputInError] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
 
     function onEditClicked(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.stopPropagation();
@@ -25,6 +27,11 @@ export default function BoardDropdownItem({id}: {id: string}) {
 
     function onDeleteClicked(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.stopPropagation();
+        setModalOpen(true);
+    }
+
+    function onDeleteModalSuccess() {
+        deleteBoard(id);
     }
 
     function onCommitClicked(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -67,12 +74,22 @@ export default function BoardDropdownItem({id}: {id: string}) {
     }
 
     return (
-        <DropdownItem id={id} className={`${Style['space-out']}`}>
-            {idElement}
-            <div className={`${Style['dropdown-controls']}`}>
-                {editButton}
-                {actionButton}
-            </div>
-        </DropdownItem>
+        <>
+            <DropdownItem id={id} className={`${Style['space-out']}`}>
+                {idElement}
+                <div className={`${Style['dropdown-controls']}`}>
+                    {editButton}
+                    {actionButton}
+                </div>
+            </DropdownItem>
+            <Modal isOpen={modalOpen} onFailure={() => setModalOpen(false)} onSuccess={onDeleteModalSuccess}>
+                <ModalHeader title='Delete Board' />
+                <ModalBody>
+                    <h1>Are You Sure?</h1>
+                    <p>Deleting this board: <span className={`${Style['color-primary']}`}>{id}</span> is an irreversible action and cannot be undone. proceed with caution.</p>
+                </ModalBody>
+                <ModalFooter />
+            </Modal>
+        </>
     );
 }

@@ -1,9 +1,7 @@
 import React, { createContext, HTMLAttributes, useRef, useState } from 'react';
 import Style from './Navbar.module.scss';
-import Button, { EButtonFace } from '../ui/Button';
 
-import { FaDownload, FaUpload } from "react-icons/fa";
-import { Dropdown, DropdownDivider, DropdownItem, IDropdownImperativeHandle } from '../ui/Dropdown';
+import { Dropdown, DropdownDivider, IDropdownImperativeHandle } from '../ui/Dropdown';
 import CreateNewBoard from './CreateBoard';
 import DownloadProject from './DownloadProject';
 import UploadProject from './UploadProject';
@@ -35,7 +33,13 @@ export interface INavbarContext {
      * @param newId The new board id after replacement
      * @returns true if successful, failure may mean that a board with the replacement id already exists 
      */
-    replaceBoard(id: string, newId: string): boolean
+    replaceBoard(id: string, newId: string): boolean,
+
+    /**
+     * Delete a board
+     * @param id of the board to be deleted
+     */
+    deleteBoard(id: string): void
 }
 export const navbarContext = createContext<INavbarContext | undefined>(undefined);
 
@@ -72,8 +76,15 @@ export default function Navbar({...navAttributes}: HTMLAttributes<HTMLElement>) 
         return replacedBoard;
     }
 
+    function deleteBoard(boardId: string): void {
+        setBoardIds((prevState) => prevState.filter((id) => id !== boardId));
+        if(boardsDropdownRef.current?.getActiveChildId() === boardId) {
+            boardsDropdownRef.current?.clearActiveChild();
+        }
+    }
+
     return(
-        <navbarContext.Provider value={{addNewBoard, getBoards, clearBoards, replaceBoard}}>
+        <navbarContext.Provider value={{addNewBoard, getBoards, clearBoards, replaceBoard, deleteBoard}}>
             <nav className="navbar is-dark px-2">
                 <div className="navbar-brand">
                     <h1 className={`${Style["logo-text"]}`}>KanbanPlus-Todo</h1>
@@ -82,7 +93,7 @@ export default function Navbar({...navAttributes}: HTMLAttributes<HTMLElement>) 
                     <div className='navbar-start'>
                         
                     </div>
-                    <div className='navbar-middle'>
+                    <div className={`${Style["navbar-middle"]}`}>
                         <Dropdown placeholder='Select A Board To View' ref={boardsDropdownRef}>
                             {boardIds.map((id) => <BoardDropdownItem id={id} key={`board dropdown item ${id}`} />)}
                             <DropdownDivider />
