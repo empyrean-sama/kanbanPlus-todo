@@ -13,7 +13,7 @@ export default function CreateNewBoard() {
     const [inputInDanger, setInputInDanger] = useState(false);
 
     function handleAddNewBoard() {
-        if(inputValue) {
+        if(inputValue.trim()) {
             const success = addNewBoard(inputValue);
             if(!success) {
                 setInputInDanger(true);
