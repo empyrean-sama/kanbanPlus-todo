@@ -9,15 +9,16 @@
                     "stepNumber": 1,
                     "step": "Start a clean session",
                     "validation": [
-                        "The board-selector-dropdown on the navbar must be visible and not open",
-                        "User must not be able to add a new board"
+                        "The board-selector-dropdown on the navbar must be visible and not active",
+                        "User must not be able to add a new board",
+                        "The dropdown display must read the prompt 'Select A Board To View"
                     ]
                 },
                 {
                     "stepNumber": 2,
                     "step": "Click on the board selector dropdown",
                     "validation": [
-                        "The board-selector-dropdown on the navbar must be visible and open",
+                        "The board-selector-dropdown on the navbar must be visible and active",
                         "User must be able to add a new board",
                         "Number of boards currently in the project must be zero"
                     ]
@@ -49,20 +50,18 @@
                     "stepNumber": 6,
                     "step": "Add a board with the name test",
                     "validation": [
-                        "The board-selector-dropdown on the navbar must be visible and open",
+                        "The board-selector-dropdown on the navbar must be visible and active",
                         "The board-selector-dropdown-menu must be visible",
-                        "User must be able to add a new board",
                         "The new board name input must be empty and not in error",
                         "Number of boards currently in the project must be one"
                     ]
                 },
                 {
                     "stepNumber": 7,
-                    "step": "Add two more boards with names other than tes",
+                    "step": "Add two more boards with names other than test",
                     "validation": [
-                        "Check order in which the boards were added, the first added board must be at the top",
-                        "Only three boards must be visible for the user to select",
-                        "User must be able to add a new board"
+                        "Check order in which the boards were added, first added board 'test' must still be at the top",
+                        "Only three boards must be visible for the user to select"
                     ]
                 },
                 {
@@ -84,20 +83,20 @@
                     "stepNumber": 10,
                     "step": "Hit the add board button",
                     "validation": [
-                        "The board-selector-dropdown on the navbar must be visible and open",
+                        "The board-selector-dropdown on the navbar must be visible and active",
                         "The board-selector-dropdown-menu must be visible",
-                        "User must be able to add a new board",
                         "The new board name input must be empty and not in error",
-                        "Number of boards currently in the project must be one"
+                        "Number of boards currently in the project must be four",
+                        "Board 'tes' must be added at the end"
                     ]
                 },
                 {
                     "stepNumber": 11,
                     "step": "Click on the board selector drop down",
                     "validation": [
-                        "The board-selector-dropdown on the navbar must be visible and not open",
+                        "The board-selector-dropdown on the navbar must be visible and not active",
                         "The board-selector-dropdown-menu must not be visible",
-                        "User must not be able to add a new board"
+                        "The dropdown display must read the prompt 'Select A Board To View'"
                     ]
                 }
             ]

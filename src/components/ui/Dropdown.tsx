@@ -4,6 +4,7 @@ import Style from './Dropdown.module.scss';
 
 export interface IDropdownProps {
     placeholder: string
+    id?: string
 }
 
 export interface IDropdownContext {
@@ -19,7 +20,7 @@ export interface IDropdownImperativeHandle {
     getActiveChildId(): string
 }
 
-export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<IDropdownProps>>(function({placeholder, children}, ref) {
+export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<IDropdownProps>>(function({placeholder, id, children}, ref) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [activeChildId, setActiveChildId] = useState("");
@@ -45,7 +46,7 @@ export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<
     const ArrowComponent = isOpen ? FaAngleUp : FaAngleDown;
 
     return(
-        <div className={`dropdown ${isOpen ? 'is-active' : ''}`}>
+        <div className={`dropdown ${isOpen ? 'is-active' : ''}`} id={id? id: undefined}>
             <div className="dropdown-trigger">
                 <button className={`button ${Style['dropdown-button']}`} aria-haspopup="true" onClick={() => setIsOpen((prevState) => !prevState)}>
                     <span className="mr-2">{activeChildId ? activeChildId : placeholder}</span>
@@ -73,7 +74,7 @@ export function DropdownItem({id, selectable, children, className}: {id: string,
     }
     if(selectable) {
         return(
-            <a className={className} onClick={() => {
+            <a id={id} className={className} onClick={() => {
                 setActiveChildId(id);
                 closeDropdown();
             }}>
@@ -83,7 +84,7 @@ export function DropdownItem({id, selectable, children, className}: {id: string,
     }
     else  {
         return (
-            <div className={className}>
+            <div id={id} className={className}>
                 {children}
             </div>
         );

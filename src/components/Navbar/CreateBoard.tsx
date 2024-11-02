@@ -14,7 +14,7 @@ export default function CreateNewBoard() {
 
     function handleAddNewBoard() {
         if(inputValue.trim()) {
-            const success = addNewBoard(inputValue);
+            const success = addNewBoard(inputValue.trim());
             if(!success) {
                 setInputInDanger(true);
             }
@@ -36,8 +36,8 @@ export default function CreateNewBoard() {
 
     return (
         <DropdownItem id="create-board" className={Style['flex']} selectable={false}>
-            <input value={inputValue} onChange={handleInputChanged} className={`input mr-4 ${inputInDanger ? 'is-danger' : ''}`} type="text" placeholder="New Board Name" />
-            <Button face={EButtonFace.link} onClick={handleAddNewBoard}><FaPlus /></Button>
+            <input id="create-board-input" value={inputValue} onChange={handleInputChanged} className={`input mr-4 ${inputInDanger ? 'is-danger' : ''}`} type="text" placeholder="New Board Name" />
+            <Button id="create-board-button" face={EButtonFace.link} onClick={handleAddNewBoard}><FaPlus /></Button>
         </DropdownItem>
     )
 }
