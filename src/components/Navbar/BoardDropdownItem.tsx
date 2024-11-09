@@ -64,13 +64,13 @@ export default function BoardDropdownItem({id}: {id: string}) {
 
     if(isEditable) {
         idElement = <input className={`input ${inputInError? 'is-danger' : ''}`} type='text' value={inputValue} onChange={onInputChange} onClick={onInputClick} />
-        editButton = <button onClick={onEditClicked} className='mr-2'><FaArrowRotateLeft size={16} className={`${Style['icon']} ${Style['erase-icon']}`}/></button>
-        actionButton = <button onClick={onCommitClicked}><FaCircleCheck size={16} className={`${Style['icon']} ${Style['commit-icon']}`}/></button>
+        editButton = <button data-test="edit-button" onClick={onEditClicked} className='mr-2'><FaArrowRotateLeft size={16} className={`${Style['icon']} ${Style['erase-icon']}`}/></button>
+        actionButton = <button data-test="action-button" onClick={onCommitClicked}><FaCircleCheck size={16} className={`${Style['icon']} ${Style['commit-icon']}`}/></button>
     }
     else {
         idElement = id;
-        editButton = <button onClick={onEditClicked} className='mr-2'><FaPenToSquare size={16} className={`${Style['icon']} ${Style['edit-icon']}`}/></button>
-        actionButton = <button onClick={onDeleteClicked}><FaTrashCan size={16} className={`${Style['icon']} ${Style['delete-icon']}`}/></button>
+        editButton = <button data-test="edit-button" onClick={onEditClicked} className='mr-2'><FaPenToSquare size={16} className={`${Style['icon']} ${Style['edit-icon']}`}/></button>
+        actionButton = <button data-test="action-button" onClick={onDeleteClicked}><FaTrashCan size={16} className={`${Style['icon']} ${Style['delete-icon']}`}/></button>
     }
 
     return (

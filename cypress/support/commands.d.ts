@@ -1,5 +1,5 @@
 declare namespace Cypress {
-    interface Chainable<any> {
+    interface Chainable<Subject = any> {
         /**
          * Utility method to help get all the selectable items from a dropdown component
          * @param cssSelector: The css selector string which can reliably get a dropdown react component. (component is a div which will always have class dropdown)

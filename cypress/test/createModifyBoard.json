@@ -100,6 +100,136 @@
                     ]
                 }
             ]
+        },
+        "modify-board": {
+            "test-number": 2,
+            "steps": [
+                {
+                    "stepNumber": 1,
+                    "step": "Start a clean session",
+                    "validation": []
+                },
+                {
+                    "stepNumber": 2,
+                    "step": "Click on the board selector dropdown",
+                    "validation": [
+                        "Number of boards currently in the project must be zero",
+                        "board-selector-dropdown's display must read 'Select A Board To View'"
+                    ]
+                },
+                {
+                    "stepNumber": 3,
+                    "step": "Add a board by the name 'Test'",
+                    "validation": [
+                        "board-selector-dropdown must have one selectable item 'Test'",
+                        "board-selector-dropdown's display must read 'Select A Board To View'",
+                        "The board 'Test' should not be selected"
+                    ]
+                },
+                {
+                    "stepNumber": 4,
+                    "step": "Click the selectable item 'Test' on the dropdown",
+                    "validation": [
+                        "board-selector-dropdown's display must read 'Test'",
+                        "The board-selector-dropdown on the navbar must be visible and not active"
+                    ]
+                },
+                {
+                    "stepNumber": 5,
+                    "step": "Click on the board selector dropdown",
+                    "validation": [
+                        "The item 'Test' must be selected",
+                        "board-selector-dropdown's display must read 'Test'"
+                    ]
+                },
+                {
+                    "stepNumber": 6,
+                    "step": "Click on edit name button",
+                    "validation": [
+                        "The board name must be editable"
+                    ]
+                },
+                {
+                    "stepNumber": 7,
+                    "step": "change the name to something else",
+                    "validation": [
+                        "The new name must be the value of the editable box",
+                        "The item at large must still be selected"
+                    ]
+                },
+                {
+                    "stepNumber": 8,
+                    "step": "hit the reset button",
+                    "validation": [
+                        "The value of the editable box must come back to 'Test'",
+                        "The item at large must still be selected"
+                    ]
+                },
+                {
+                    "stepNumber": 9,
+                    "step": "hit finish",
+                    "validation": [
+                        "The 'Test' item must still be selected",
+                        "The 'Test' value must no longer be editable"
+                    ]
+                },
+                {
+                    "stepNumber": 10,
+                    "step": "create a new board 'kanban' and select it",
+                    "validation": [
+                        "board-selector-dropdown's display must read 'kanban'",
+                        "The 'kanban' item must be selected"
+                    ]
+                },
+                {
+                    "stepNumber": 11,
+                    "step": "Hit the edit button again on the 'Test' item",
+                    "validation": [
+                        "The text on the 'Test' item must be editable",
+                        "The 'Test' item must not be selected",
+                        "board-selector-dropdown's display must read 'kanban'"
+                    ]
+                },
+                {
+                    "stepNumber": 12,
+                    "step": "change the name to something else",
+                    "validation": [
+                        "The new name must be the value of the editable box",
+                        "The selected item must be 'kanban'"
+                    ]
+                },
+                {
+                    "stepNumber": 13,
+                    "step": "Hit the reset button",
+                    "validation": [
+                        "The value of the editable box must come back to 'Test'",
+                        "The 'kanban' item must still be selected"
+                    ]
+                },
+                {
+                    "stepNumber": 14,
+                    "step": "Hit the finish button",
+                    "validation": [
+                        "The kanban item must still be selected",
+                        "The dropdown display must still show kanban"
+                    ]
+                },
+                {
+                    "stepNumber": 15,
+                    "step": "Hit the edit button again on the 'kanban' item",
+                    "validation": [
+                        "The kanban item must still be selected"
+                    ]
+                },
+                {
+                    "stepNumber": 16,
+                    "step": "Change the name to 'kanban plus todo' and hit finish",
+                    "validation": [
+                        "The item kanban plus todo must be selected",
+                        "The dropdown display must read kanban plus todo"
+                    ]
+                }
+            ]
         }
     }
 }
