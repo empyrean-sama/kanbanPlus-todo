@@ -1,0 +1,8 @@
+.full-height-flex-column {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--spacing-02);
+    
+    height: 100vh;
+    overflow-y: hidden;
+}
