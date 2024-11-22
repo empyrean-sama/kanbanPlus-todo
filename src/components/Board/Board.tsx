@@ -82,16 +82,16 @@ export default function Board() {
         <boardContext.Provider value={{setCardState, moveCard}}>
             <div className={`${Style['column-holder']}`}>
                 <Column id={`column-${ECardState.todo}`} title='Todo' associatedState={ECardState.todo}>
-                    {cards.filter((card) => card.state === ECardState.todo).map((card) => <Card key={card.uuid} id={card.uuid} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }    
+                    {cards.filter((card) => card.state === ECardState.todo).map((card) => <Card key={card.uuid} id={card.uuid} type={card.type} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }    
                 </Column>
                 <Column id={`column-${ECardState.doing}`} title='Doing' associatedState={ECardState.doing}>
-                    {cards.filter((card) => card.state === ECardState.doing).map((card) => <Card key={card.uuid} id={card.uuid} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }
+                    {cards.filter((card) => card.state === ECardState.doing).map((card) => <Card key={card.uuid} id={card.uuid} type={card.type} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }
                 </Column>
                 <Column id={`column-${ECardState.done}`} title='Done' associatedState={ECardState.done}>
-                    {cards.filter((card) => card.state === ECardState.done).map((card) => <Card key={card.uuid} id={card.uuid} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }
+                    {cards.filter((card) => card.state === ECardState.done).map((card) => <Card key={card.uuid} id={card.uuid} type={card.type} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }
                 </Column>
                 <Column id={`column-${ECardState.regression}`} title='Regression' associatedState={ECardState.regression}>
-                    {cards.filter((card) => card.state === ECardState.regression).map((card) => <Card key={card.uuid} id={card.uuid} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }
+                    {cards.filter((card) => card.state === ECardState.regression).map((card) => <Card key={card.uuid} id={card.uuid} type={card.type} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }
                 </Column>
             </div>
         </boardContext.Provider>

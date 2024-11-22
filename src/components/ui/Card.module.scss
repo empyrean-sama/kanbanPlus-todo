@@ -1,6 +1,22 @@
 .card {
     margin-right: var(--spacing-03);
     width: calc(100% - var(--spacing-03));
+    border-radius: 0;
+
+    --header-color:  var(--bulma-black)
+}
+
+// .card.card-task {
+//    // --header-color:  var(--bulma-black)
+// }
+
+// .card.card-regression {
+//     // --header-color: var(--color-danger);
+// }
+
+.card-header {
+    border-radius: 0 !important;
+    background-color: var(--header-color);
 }
 
 .card-header-title {
@@ -8,8 +24,15 @@
     justify-content: space-between;
 }
 
+.card-header-title-left {
+    display: flex;
+    align-items: center;
+    column-gap: var(--spacing-02);
+    text-transform: capitalize;
+}
+
 .card-content {
-    padding-top: 0;
+    padding: var(--spacing-03) var(--spacing-04);
 }
 
 .card-button {
@@ -19,13 +42,23 @@
     align-items: center;
 }
 
-.delete-icon {
-    color: var(--color-danger);
+.icon {
     cursor: pointer;
 }
 
+.danger-icon {
+    color: var(--color-danger);
+}
+
+.warning-icon {
+    color: var(--color-warning);
+}
+
+.success-icon {
+    color: var(--color-success);
+}
+
 .content {
-    margin-top: var(--spacing-03);
     display: flex;
     flex-direction: column;
     row-gap: var(--spacing-02);
