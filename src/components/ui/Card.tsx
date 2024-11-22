@@ -3,23 +3,37 @@ import Style from './Card.module.scss';
 import Button, { EButtonFace } from './Button';
 
 import { FaLink, FaPlay, FaStop, FaPenToSquare, FaTrashCan  } from "react-icons/fa6";
+export interface ICardProps {
+    id: string,
+    title: string,
+    description: string,
+    storyPoints: number
+}
 
-export default function Card() {
+export default function Card(props: ICardProps) {
+
+    function handleDragStart(ev: React.DragEvent<HTMLDivElement>) {
+        const element = ev.target as HTMLDivElement;
+        ev.dataTransfer.setData('text/plain', element.id);
+    }
+
     return(
-        <div className={`card ${Style['card']} is-primary`}>
+        <div 
+            id={props.id}
+            className={`card ${Style['card']} is-primary`} 
+            draggable="true" 
+            onDragStart={(ev) => handleDragStart(ev)} 
+        >
             <header className="card-header">
-                <p className={`card-header-title ${Style['card-header-title']}`}>Card header <FaTrashCan className={Style['delete-icon']} /></p>
+                <p className={`card-header-title ${Style['card-header-title']}`}>{props.title} <FaTrashCan className={Style['delete-icon']} /></p>
             </header>
             <div className={`${Style['card-content']} card-content`}>
                 <div className={`${Style['content']} content`}>
                     <div className={Style['tags']}>
-                        <span className="tag is-warning">Story Points: 8</span>
+                        <span className="tag is-warning">Story Points: {props.storyPoints}</span>
                     </div>
                     <div className={`${Style['description-text']}`}>
-                        Lorem ipsum leo risus, porta ac consectetur ac, vestibulum at eros. Donec
-                        id elit non mi porta gravida at eget metus. Cum sociis natoque penatibus
-                        et magnis dis parturient montes, nascetur ridiculus mus. Cras mattis
-                        consectetur purus sit amet fermentum.
+                        {props.description}
                     </div>
                 </div>
             </div>
