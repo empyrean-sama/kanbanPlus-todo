@@ -42,6 +42,15 @@ export function getTestTodoCards(): ICard[] {
             storyPoints: 8
         },
         {
+            uuid: 'test card 7',
+            type: ECardType.task,
+            title: 'card 7',
+            description: 'this is the description for an example of card 7',
+            state: ECardState.todo,
+            createdDate: new Date(),
+            storyPoints: 8
+        },
+        {
             uuid: 'test card 4',
             type: ECardType.task,
             title: 'card 4',
