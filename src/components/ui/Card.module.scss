@@ -1,7 +1,6 @@
 .card {
     margin-right: var(--spacing-03);
     width: calc(100% - var(--spacing-03));
-    border-radius: 0;
 
     --header-color:  var(--bulma-black)
 }
@@ -15,7 +14,6 @@
 // }
 
 .card-header {
-    border-radius: 0 !important;
     background-color: var(--header-color);
 }
 
@@ -36,10 +34,25 @@
 }
 
 .card-button {
-    border-radius: 0;
     display: flex;
     column-gap: var(--spacing-01);
     align-items: center;
+}
+
+.links-button {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.timer-button{
+    border-radius: 0;
+}
+
+.edit-button{
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
 .icon {

@@ -4,6 +4,7 @@
     overflow-y: hidden;
     background-color: var(--bulma-dark);
     row-gap: var(--spacing-02);
+    border-radius: .75rem; //this is the same as --bulma-card-radius, cannot use this variable as it is defined on the card
 }
 
 .title {

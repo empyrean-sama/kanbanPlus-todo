@@ -60,9 +60,9 @@ export default function Card(props: ICardProps) {
                 </div>
             </div>
             <footer className="card-footer">
-                <Button face={EButtonFace.link} className={`card-footer-item ${Style['card-button']}`}>Links(3)<FaLink width="16" /></Button>
-                <Button face={EButtonFace.primary} className={`card-footer-item ${Style['card-button']}`}>1min <FaPlay width="16"/></Button>
-                <Button face={EButtonFace.link} className={`card-footer-item ${Style['card-button']}`}>Edit <FaPenToSquare width="16"/></Button>
+                <Button face={EButtonFace.link} className={`card-footer-item ${Style['card-button']} ${Style['links-button']}`}>Links(3)<FaLink width="16" /></Button>
+                <Button face={EButtonFace.primary} className={`card-footer-item ${Style['card-button']} ${Style['timer-button']}`}>1min <FaPlay width="16"/></Button>
+                <Button face={EButtonFace.link} className={`card-footer-item ${Style['card-button']} ${Style['edit-button']}`}>Edit <FaPenToSquare width="16"/></Button>
             </footer>
         </div>
     );
