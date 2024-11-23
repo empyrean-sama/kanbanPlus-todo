@@ -1,14 +1,14 @@
 import React, { useContext, useState } from 'react';
 import Button, { EButtonFace } from '../ui/Button';
 import { DropdownItem, dropdownContext, IDropdownContext } from '../ui/Dropdown';
-import { INavbarContext, navbarContext } from './Navbar';
 
 import Style from './CreateBoard.module.scss';
 import { FaPlus } from 'react-icons/fa6';
+import { boardAPIContext, IBoardAPI } from '../CardsAPI/BoardAPI';
 
 export default function CreateNewBoard() {
-    const {activeChildId, setActiveChildId, closeDropdown} = useContext(dropdownContext) as IDropdownContext;
-    const {addNewBoard} = useContext(navbarContext) as INavbarContext;
+    const { addNewBoard } = useContext(boardAPIContext) as IBoardAPI;
+
     const [inputValue, setInputValue] = useState('');
     const [inputInDanger, setInputInDanger] = useState(false);
 

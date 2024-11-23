@@ -2,18 +2,17 @@ import React, { useContext, useState } from 'react';
 import { DropdownItem } from '../ui/Dropdown';
 import Modal, {ModalHeader, ModalBody, ModalFooter} from '../ui/Modal';
 
-import { INavbarContext, navbarContext } from './Navbar';
-
 import { FaPenToSquare } from "react-icons/fa6";
 import { FaArrowRotateLeft } from "react-icons/fa6";
 import { FaTrashCan } from "react-icons/fa6";
 import { FaCircleCheck } from "react-icons/fa6";
 
 import Style from './BoardDropdownItem.module.scss';
+import { boardAPIContext, IBoardAPI } from '../CardsAPI/BoardAPI';
 
 export default function BoardDropdownItem({id}: {id: string}) {
 
-    const { replaceBoard, deleteBoard } = useContext(navbarContext) as INavbarContext;
+    const { modifyBoardId, deleteBoard} = useContext(boardAPIContext) as IBoardAPI;
     const [isEditable, setIsEditable] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [inputInError, setInputInError] = useState(false);
@@ -36,7 +35,7 @@ export default function BoardDropdownItem({id}: {id: string}) {
 
     function onCommitClicked(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         e.stopPropagation();
-        const success = (id === inputValue) || replaceBoard(id, inputValue);
+        const success = (id === inputValue) || modifyBoardId(id, inputValue);
         if(success) {
             setIsEditable(false);
             setInputInError(false);

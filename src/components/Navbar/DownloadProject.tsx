@@ -4,7 +4,6 @@ import Button from '../ui/Button';
 import Modal, {ModalHeader, ModalBody, ModalFooter} from '../ui/Modal';
 import Checkbox from '../ui/Checkbox';
 
-import { INavbarContext, navbarContext } from './Navbar';
 import { getCardsAPIVersion } from '../../utilities/cardsAPIUtils';
 import Settings from '../../settings.json';
 import download from '../../utilities/download';
@@ -13,10 +12,11 @@ import { IMessageService, messageServiceContext, EMessageType } from '../Message
 
 import IProject from '../../interface/IProject';
 import IBoard from '../../interface/IBoard';
+import { boardAPIContext, IBoardAPI } from '../CardsAPI/BoardAPI';
 
 export default function DownloadProject() {
     
-    const { getBoards } = useContext(navbarContext) as INavbarContext;
+    const { getBoardIds} = useContext(boardAPIContext) as IBoardAPI
     const { showMessage } = useContext(messageServiceContext) as IMessageService;
     
     const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +24,7 @@ export default function DownloadProject() {
     const [selectedBoards, setSelectedBoards] = useState<Array<string>>([]);
     
     function onClick() {
-        const allBoards = getBoards();
+        const allBoards = getBoardIds();
         if(allBoards.length > 0) {
             setIsOpen(true);
         }
@@ -77,7 +77,7 @@ export default function DownloadProject() {
 
                     <h2>Include Boards</h2>
                     <div className='checkboxes'>
-                        {getBoards().map((boardId) => <Checkbox key={boardId} onCheckChanged={(checked) => handleBoardOnCheckChanged(checked, boardId)}> {boardId} </Checkbox>)}
+                        {getBoardIds().map((boardId) => <Checkbox key={boardId} onCheckChanged={(checked) => handleBoardOnCheckChanged(checked, boardId)}> {boardId} </Checkbox>)}
                     </div>
 
                     <h3>Details</h3>

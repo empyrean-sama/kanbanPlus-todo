@@ -1,4 +1,4 @@
-import React, { createContext, HTMLAttributes, useRef, useState } from 'react';
+import React, { createContext, HTMLAttributes, useContext, useRef, useState } from 'react';
 import Style from './Navbar.module.scss';
 
 import { Dropdown, DropdownDivider, IDropdownImperativeHandle } from '../ui/Dropdown';
@@ -6,41 +6,9 @@ import CreateNewBoard from './CreateBoard';
 import DownloadProject from './DownloadProject';
 import UploadProject from './UploadProject';
 import BoardDropdownItem from './BoardDropdownItem';
+import { boardAPIContext, IBoardAPI } from '../CardsAPI/BoardAPI';
 
 export interface INavbarContext {
-    /**
-     * Try to add a new empty board to the project
-     * @param boardName: the a project wide unique board name, can contain most types of characters
-     * @returns true if the board was successfully created
-     */
-    addNewBoard(boardName: string): boolean
-
-    /**
-     * Get all the boards available in this project
-     * @returns an array containing all the boards in this project
-     */
-    getBoards(): Array<string>,
-
-    /**
-     * Clear all the boards in this project
-     * ? useful in situations like loading in a new project where you quickly need to clear out all the boards and add new ones in
-     */
-    clearBoards(): void,
-
-    /**
-     * Modify an existing board id to a new id
-     * @param id The board id to replace
-     * @param newId The new board id after replacement
-     * @returns true if successful, failure may mean that a board with the replacement id already exists 
-     */
-    replaceBoard(id: string, newId: string): boolean,
-
-    /**
-     * Delete a board
-     * @param id of the board to be deleted
-     */
-    deleteBoard(id: string): void
-
     /**
      * Clear the active child on the dropdown
      */
@@ -49,51 +17,27 @@ export interface INavbarContext {
 export const navbarContext = createContext<INavbarContext | undefined>(undefined);
 
 export default function Navbar({...navAttributes}: HTMLAttributes<HTMLElement>) {
-    const [boardIds, setBoardIds] = useState<Array<string>>([]);
     const boardsDropdownRef = useRef<IDropdownImperativeHandle>(null);
+    const boardAPI = useContext(boardAPIContext) as IBoardAPI;
 
-    function addNewBoard(boardName: string): boolean {
-        const foundBoardWithSameId: boolean = !!(boardIds.find((value) => value === boardName));
-        if(!foundBoardWithSameId) {
-            setBoardIds((prevState) => [...prevState, boardName]);
-            return true;
+    boardAPI.onModifyBoardId((oldId: string, newId: string) => {
+        if(boardsDropdownRef.current?.getActiveChildId() === oldId) {
+            boardsDropdownRef.current?.setActiveChild(newId);
         }
-        return false;
-    }
+    })
 
-    function getBoards() : Array<string> {
-        return boardIds;
-    }
-
-    function clearBoards() {
-        setBoardIds([]);
-    }
-
-    function replaceBoard(id: string, newId: string): boolean {
-        let replacedBoard = false;
-        if(!boardIds.find((boardId: string) => boardId === newId)) {
-            setBoardIds((prevState) => [...prevState.map((i) => (i === id? newId: i))]);
-            if(boardsDropdownRef.current?.getActiveChildId() === id) {
-                boardsDropdownRef.current?.setActiveChild(newId);
-            }
-            replacedBoard = true;
-        }
-        return replacedBoard;
-    }
-
-    function deleteBoard(boardId: string): void {
-        setBoardIds((prevState) => prevState.filter((id) => id !== boardId));
-        if(boardsDropdownRef.current?.getActiveChildId() === boardId) {
+    boardAPI.onDeleteBoard((boardIdDeleted: string) => {
+        if(boardsDropdownRef.current?.getActiveChildId() === boardIdDeleted) {
             boardsDropdownRef.current?.clearActiveChild();
         }
-    }
+    })
 
     function clearDropdownActiveChild() {
         boardsDropdownRef.current?.clearActiveChild();
     }
 
     return(
-        <navbarContext.Provider value={{addNewBoard, getBoards, clearBoards, replaceBoard, deleteBoard, clearDropdownActiveChild}}>
+        <navbarContext.Provider value={{ clearDropdownActiveChild }}>
             <nav className="navbar is-dark px-2">
                 <div className="navbar-brand">
                     <h1 className={`${Style["logo-text"]}`}>KanbanPlus-Todo</h1>
@@ -104,7 +48,7 @@ export default function Navbar({...navAttributes}: HTMLAttributes<HTMLElement>) 
                     </div>
                     <div className={`${Style["navbar-middle"]}`}>
                         <Dropdown placeholder='Select A Board To View' ref={boardsDropdownRef} id="board-selection-dropdown">
-                            {boardIds.map((id) => <BoardDropdownItem id={id} key={`board dropdown item ${id}`} />)}
+                            {boardAPI.getBoardIds().map((id) => <BoardDropdownItem id={id} key={`board dropdown item ${id}`} />)}
                             <DropdownDivider />
                             <CreateNewBoard />
                         </Dropdown>

@@ -7,15 +7,16 @@ import { FaUpload } from "react-icons/fa6";
 import { EMessageType, IMessageService, messageServiceContext } from '../Message/MessageService';
 
 import IProject from '../../interface/IProject';
-import IBoard from '../../interface/IBoard';
+import { boardAPIContext, IBoardAPI } from '../CardsAPI/BoardAPI';
 
 export default function UploadProject() {
     const { showMessage } = useContext(messageServiceContext) as IMessageService;
-    const { getBoards, clearBoards, addNewBoard, clearDropdownActiveChild } = useContext(navbarContext) as INavbarContext;
+    const { getBoardIds, clearBoards, addNewBoard } = useContext(boardAPIContext) as IBoardAPI;
+    const { clearDropdownActiveChild } = useContext(navbarContext) as INavbarContext;
     const [ modalOpen, setModalOpen ] = useState(false);
 
     function onClick() {
-        if(getBoards().length > 0) {
+        if(getBoardIds().length > 0) {
             setModalOpen(true);
         }
         else {
