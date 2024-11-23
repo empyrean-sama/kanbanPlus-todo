@@ -1,30 +1,27 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useContext } from 'react';
 import Style from './Board.module.scss';
 
 import Column from './Column';
 import Card from './Card';
 
-import ICard, { getTestTodoCards } from '../../interface/ICard';
 import ECardState from '../../Enum/ECardState';
+import { cardAPIContext, ICardAPI } from '../CardsAPI/CardAPI';
 
 export interface IBoardComponentContext {
-    setCardState(id: string, state: ECardState): void,
-    moveCard(id: string, state: ECardState, y: number): void,
+    /**
+     * This utility method will set the card's state and also position of the card in the new column
+     * @param cardId: the unique id of the card whose state should be changed
+     * @param state: the new state of the card
+     * @param clientY: where was the card dropped? (get this value from the dom event ev.clientY)
+     */
+    moveCard(cardId: string, state: ECardState, clientY: number): void;
 }
 export const boardComponentContext = createContext<IBoardComponentContext | undefined>(undefined);
 
 export default function Board() {
 
-    const [cards, setCards] = useState(getTestTodoCards());
-
-    function setCardState(id: string, state: ECardState): void {
-        setCards((prevState) => prevState.map((card) => {
-            if(card.uuid === id) {
-                card.state = state;
-            }
-            return card;
-        }));
-    }
+    const { getAllCards, setCardState, setCards } = useContext(cardAPIContext) as ICardAPI;
+    const cards = getAllCards();
 
     function moveCard(id: string, state: ECardState, dropY: number): void {
         const columnCards: HTMLDivElement[] = [...(document.getElementById(`column-${state}`) as HTMLDivElement).children[1].children] as HTMLDivElement[];
@@ -83,7 +80,7 @@ export default function Board() {
     }
 
     return (
-        <boardComponentContext.Provider value={{setCardState, moveCard}}>
+        <boardComponentContext.Provider value={{moveCard}}>
             <div className={`${Style['column-holder']}`}>
                 <Column id={`column-${ECardState.todo}`} title='Todo' associatedState={ECardState.todo}>
                     {cards.filter((card) => card.state === ECardState.todo).map((card) => <Card key={card.uuid} id={card.uuid} type={card.type} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }    

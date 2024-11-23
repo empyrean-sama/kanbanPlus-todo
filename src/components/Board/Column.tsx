@@ -1,6 +1,5 @@
 import React, { HTMLAttributes, PropsWithChildren, useContext, useEffect } from 'react';
 import Style from './Column.module.scss';
-import ICard from '../../interface/ICard';
 
 import { boardComponentContext, IBoardComponentContext } from './Board';
 import ECardState from '../../Enum/ECardState';
