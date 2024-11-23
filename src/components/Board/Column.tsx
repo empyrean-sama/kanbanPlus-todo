@@ -1,9 +1,8 @@
 import React, { HTMLAttributes, PropsWithChildren, useContext, useEffect } from 'react';
 import Style from './Column.module.scss';
-import Card from '../ui/Card';
 import ICard from '../../interface/ICard';
 
-import { boardContext, IBoardContextAPI } from './Board';
+import { boardComponentContext, IBoardComponentContext } from './Board';
 import ECardState from '../../Enum/ECardState';
 
 export interface IColumnProps extends HTMLAttributes<HTMLDivElement> {
@@ -17,11 +16,9 @@ export interface IColumnProps extends HTMLAttributes<HTMLDivElement> {
  * ? Only 4 of these exist as of version 1.0
  * @returns a Column react component
  */
-export default function Column({title, associatedState, className, children, ...htmlAttributes}: PropsWithChildren<IColumnProps>) { 
-
+export default function Column({title, associatedState, className, children, ...htmlAttributes}: PropsWithChildren<IColumnProps>) {
     const customClassName = className || "";
-
-    const boardContextAPI = useContext(boardContext) as IBoardContextAPI;
+    const boardContextAPI = useContext(boardComponentContext) as IBoardComponentContext;
     
     function handleDrop(ev: React.DragEvent<HTMLDivElement>) {
         ev.preventDefault();

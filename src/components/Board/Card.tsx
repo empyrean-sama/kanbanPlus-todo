@@ -1,6 +1,6 @@
 import React from 'react';
 import Style from './Card.module.scss';
-import Button, { EButtonFace } from './Button';
+import Button, { EButtonFace } from '../ui/Button';
 
 import { FaLink, FaPlay, FaStop, FaPenToSquare, FaTrashCan, FaBug, FaListCheck  } from "react-icons/fa6";
 import { ECardType } from '../../Enum/ECardType';

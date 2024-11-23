@@ -2,16 +2,16 @@ import React, { createContext, useState } from 'react';
 import Style from './Board.module.scss';
 
 import Column from './Column';
-import Card from '../ui/Card';
+import Card from './Card';
 
 import ICard, { getTestTodoCards } from '../../interface/ICard';
 import ECardState from '../../Enum/ECardState';
 
-export interface IBoardContextAPI {
+export interface IBoardComponentContext {
     setCardState(id: string, state: ECardState): void,
     moveCard(id: string, state: ECardState, y: number): void,
 }
-export const boardContext = createContext<IBoardContextAPI | undefined>(undefined);
+export const boardComponentContext = createContext<IBoardComponentContext | undefined>(undefined);
 
 export default function Board() {
 
@@ -83,7 +83,7 @@ export default function Board() {
     }
 
     return (
-        <boardContext.Provider value={{setCardState, moveCard}}>
+        <boardComponentContext.Provider value={{setCardState, moveCard}}>
             <div className={`${Style['column-holder']}`}>
                 <Column id={`column-${ECardState.todo}`} title='Todo' associatedState={ECardState.todo}>
                     {cards.filter((card) => card.state === ECardState.todo).map((card) => <Card key={card.uuid} id={card.uuid} type={card.type} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }    
@@ -98,6 +98,6 @@ export default function Board() {
                     {cards.filter((card) => card.state === ECardState.regression).map((card) => <Card key={card.uuid} id={card.uuid} type={card.type} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }
                 </Column>
             </div>
-        </boardContext.Provider>
+        </boardComponentContext.Provider>
     );
 }
