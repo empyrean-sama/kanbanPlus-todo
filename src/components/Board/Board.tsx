@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import Style from './Board.module.scss';
 
 import Column from './Column';
@@ -6,6 +6,7 @@ import Card from './Card';
 
 import ECardState from '../../Enum/ECardState';
 import { cardAPIContext, ICardAPI } from '../CardsAPI/CardAPI';
+import EditCard from './EditCard';
 
 export interface IBoardComponentContext {
     /**
@@ -15,10 +16,22 @@ export interface IBoardComponentContext {
      * @param clientY: where was the card dropped? (get this value from the dom event ev.clientY)
      */
     moveCard(cardId: string, state: ECardState, clientY: number): void;
+
+    /**
+     * Open the card edit window
+     */
+    openCardEdit(): void,
+
+    /**
+     * Close the card edit window
+     */
+    closeCardEdit(): void,
 }
 export const boardComponentContext = createContext<IBoardComponentContext | undefined>(undefined);
 
 export default function Board() {
+
+    const [ showEditCard, setShowEditCard ] = useState(false);
 
     const { getAllCards, setCardState, setCards } = useContext(cardAPIContext) as ICardAPI;
     const cards = getAllCards();
@@ -79,8 +92,17 @@ export default function Board() {
         }        
     }
 
+    function openCardEdit() {
+        setShowEditCard(true);
+    }
+
+    function closeCardEdit() {
+        setShowEditCard(false);
+    }
+
     return (
-        <boardComponentContext.Provider value={{moveCard}}>
+        <boardComponentContext.Provider value={{moveCard, openCardEdit, closeCardEdit}}>
+            {showEditCard ? <EditCard  /> : undefined}
             <div className={`${Style['column-holder']}`}>
                 <Column id={`column-${ECardState.todo}`} title='Todo' associatedState={ECardState.todo}>
                     {cards.filter((card) => card.state === ECardState.todo).map((card) => <Card key={card.uuid} id={card.uuid} type={card.type} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }    

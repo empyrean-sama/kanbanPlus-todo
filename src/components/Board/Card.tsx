@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Style from './Card.module.scss';
 import Button, { EButtonFace } from '../ui/Button';
 
 import { FaLink, FaPlay, FaStop, FaPenToSquare, FaTrashCan, FaBug, FaListCheck  } from "react-icons/fa6";
 import { ECardType } from '../../Enum/ECardType';
+import { cardAPIContext, ICardAPI } from '../CardsAPI/CardAPI';
+import { boardComponentContext, IBoardComponentContext } from './Board';
+import { getTestTodoCards } from '../../interface/ICard';
 
 export interface ICardProps {
     id: string,
@@ -15,9 +18,17 @@ export interface ICardProps {
 
 export default function Card(props: ICardProps) {
 
+    const { setSelectedCards } = useContext(cardAPIContext) as ICardAPI;
+    const { openCardEdit } = useContext(boardComponentContext) as IBoardComponentContext;
+
     function handleDragStart(ev: React.DragEvent<HTMLDivElement>) {
         const element = ev.target as HTMLDivElement;
         ev.dataTransfer.setData('text/plain', element.id);
+    }
+
+    function onEditClicked() {
+        setSelectedCards(getTestTodoCards());
+        openCardEdit();
     }
 
     let cardTypeIconComponent: React.ReactNode;
@@ -62,7 +73,7 @@ export default function Card(props: ICardProps) {
             <footer className="card-footer">
                 <Button face={EButtonFace.link} className={`card-footer-item ${Style['card-button']} ${Style['links-button']}`}>Links(3)<FaLink width="16" /></Button>
                 <Button face={EButtonFace.primary} className={`card-footer-item ${Style['card-button']} ${Style['timer-button']}`}>1min <FaPlay width="16"/></Button>
-                <Button face={EButtonFace.link} className={`card-footer-item ${Style['card-button']} ${Style['edit-button']}`}>Edit <FaPenToSquare width="16"/></Button>
+                <Button onClick={onEditClicked} face={EButtonFace.link} className={`card-footer-item ${Style['card-button']} ${Style['edit-button']}`}>Edit <FaPenToSquare width="16"/></Button>
             </footer>
         </div>
     );

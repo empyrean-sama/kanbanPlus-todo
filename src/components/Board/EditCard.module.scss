@@ -1,0 +1,22 @@
+.full-page-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100;
+
+    background-color: var(--bulma-dark);
+}
+
+.toolbar {
+    border: 1px solid red;
+}
+
+.editor {
+    border: 1px solid blue;
+}
+
+.wrapper {
+    border: 2px solid green;
+}

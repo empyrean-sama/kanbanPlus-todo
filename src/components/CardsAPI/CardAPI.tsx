@@ -26,12 +26,28 @@ export interface ICardAPI {
      * ! This method is essentially bypassing the whole CardAPI, do not use this if at all possible 
      * @param callback: the react method to set state 
      */
-    setCards(callback: React.SetStateAction<ICard[]>): void
+    setCards(callback: React.SetStateAction<ICard[]>): void,
+
+    /**
+     * Get the currently selected card
+     * ? this method might be useful when say opening the edit card page
+     * @returns the currently selected card if any
+     */
+    getSelectedCards(): ICard[] | undefined,
+
+    /**
+     * Set the selected cards
+     * ? this method might be useful when say opening the edit card page
+     * @param cards that were selected
+     */
+    setSelectedCards(cards: ICard[]): void,
+
 }
 export const cardAPIContext = createContext<ICardAPI | undefined>(undefined);
 
 export default function CardAPI({children}: {children: ReactNode}) {
     const [cards, setCards] = useState(getTestTodoCards());
+    const [selectedCards, setSelectedCardsState] = useState<ICard[] | undefined>(undefined);
     
     function setCardState(id: string, state: ECardState): void {
         setCards((prevState) => prevState.map((card) => {
@@ -50,8 +66,16 @@ export default function CardAPI({children}: {children: ReactNode}) {
         return cards;
     }
 
+    function getSelectedCards(): ICard[] | undefined {
+        return selectedCards;
+    }
+
+    function setSelectedCards(cards: ICard[]): void {
+        setSelectedCardsState(cards);
+    }
+
     return(
-        <cardAPIContext.Provider value={{setCardState, getAllCardIds, getAllCards, setCards}}>
+        <cardAPIContext.Provider value={{setCardState, getAllCardIds, getAllCards, setCards, getSelectedCards, setSelectedCards}}>
             {children}
         </cardAPIContext.Provider>
     );
