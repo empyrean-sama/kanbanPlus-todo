@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useState } from "react";
+import React, { createContext, ReactNode, useEffect, useState } from "react";
 import ICard, { getTestTodoCards } from '../../interface/ICard';
 import ECardState from "../../Enum/ECardState";
 export interface ICardAPI {
@@ -22,32 +22,60 @@ export interface ICardAPI {
     getAllCards(): ICard[]
 
     /**
-     * The react setCards method exposed; use this to set all cards on this board
-     * ! This method is essentially bypassing the whole CardAPI, do not use this if at all possible 
-     * @param callback: the react method to set state 
-     */
-    setCards(callback: React.SetStateAction<ICard[]>): void,
-
-    /**
      * Get the currently selected card
      * ? this method might be useful when say opening the edit card page
      * @returns the currently selected card if any
      */
-    getSelectedCards(): ICard[] | undefined,
+    getCardsSelected(): ICard[],
 
     /**
      * Set the selected cards
      * ? this method might be useful when say opening the edit card page
      * @param cards that were selected
      */
-    setSelectedCards(cards: ICard[]): void,
+    setCardsSelected(cards: ICard[]): void,
 
+    /**
+     * Utility method to clear all currently selected cards
+     */
+    clearCardsSelectSet(): void
+
+    /**
+     * Add this card to the select set
+     * @param card to be added into the select set
+     */
+    addCardToSelectSet(card: ICard): void,
+
+    /**
+     * Remove a particular card from the select set
+     * @param card 
+     */
+    removeCardFromSelectSet(uuid: string): void
+
+    /**
+     * Register a callback to be called when the select set changes
+     * @param callback: the new select set is passed into this callback, do whatever needs doing
+     */
+    onSelectSetChange(callback: (selectSet: ICard[]) => void): void,
+
+    /**
+     * The react setCards method exposed; use this to set all cards on this board
+     * ! This method is essentially bypassing the whole CardAPI, do not use this if at all possible 
+     * @param callback: the react method to set state 
+     */
+    setCards(callback: React.SetStateAction<ICard[]>): void,
 }
 export const cardAPIContext = createContext<ICardAPI | undefined>(undefined);
 
 export default function CardAPI({children}: {children: ReactNode}) {
     const [cards, setCards] = useState(getTestTodoCards());
-    const [selectedCards, setSelectedCardsState] = useState<ICard[] | undefined>(undefined);
+    const [selectedCardsSet, setSelectedCardsSet] = useState<Set<string>>(new Set<string>());
+
+    // Call everybody listening to onSelectSetChange
+    const onSelectSetChangeCallbacks:  Array<(selectSet: ICard[]) => void> = [];
+    useEffect(() => {
+        onSelectSetChangeCallbacks.forEach((callback) => callback(getCardsSelected()));
+    }, [selectedCardsSet])
     
     function setCardState(id: string, state: ECardState): void {
         setCards((prevState) => prevState.map((card) => {
@@ -66,16 +94,36 @@ export default function CardAPI({children}: {children: ReactNode}) {
         return cards;
     }
 
-    function getSelectedCards(): ICard[] | undefined {
-        return selectedCards;
+    function getCardsSelected(): ICard[] {
+        return cards.filter((card) => selectedCardsSet.has(card.uuid));
     }
 
-    function setSelectedCards(cards: ICard[]): void {
-        setSelectedCardsState(cards);
+    function setCardsSelected(selectSet: ICard[]): void {
+        setSelectedCardsSet(new Set<string>(selectSet.map((card) => card.uuid)));
+    }
+
+    function clearCardsSelectSet(): void {
+        setSelectedCardsSet(new Set<string>());
+    }
+
+    function addCardToSelectSet(card: ICard) {
+        setSelectedCardsSet((prevState) => new Set<string>([...prevState.values(), card.uuid]));
+    }
+
+    function removeCardFromSelectSet(uuid: string) {
+        setSelectedCardsSet((prevState) => new Set<string>([...prevState.values()].filter((id) => id !== uuid)));
+    }
+
+    function onSelectSetChange(callback: (selectSet: ICard[]) => void) {
+        onSelectSetChangeCallbacks.push(callback);
     }
 
     return(
-        <cardAPIContext.Provider value={{setCardState, getAllCardIds, getAllCards, setCards, getSelectedCards, setSelectedCards}}>
+        <cardAPIContext.Provider value={
+                {
+                    setCardState, getAllCardIds, getAllCards, setCards, 
+                    getCardsSelected, setCardsSelected, clearCardsSelectSet, addCardToSelectSet, removeCardFromSelectSet, onSelectSetChange
+                }}>
             {children}
         </cardAPIContext.Provider>
     );

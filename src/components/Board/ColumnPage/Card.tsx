@@ -1,25 +1,17 @@
 import React, { useContext } from 'react';
 import Style from './Card.module.scss';
-import Button, { EButtonFace } from '../ui/Button';
+import Button, { EButtonFace } from '../../ui/Button';
 
 import { FaLink, FaPlay, FaStop, FaPenToSquare, FaTrashCan, FaBug, FaListCheck  } from "react-icons/fa6";
-import { ECardType } from '../../Enum/ECardType';
-import { cardAPIContext, ICardAPI } from '../CardsAPI/CardAPI';
-import { boardComponentContext, IBoardComponentContext } from './Board';
-import { getTestTodoCards } from '../../interface/ICard';
+import { ECardType } from '../../../Enum/ECardType';
+import { cardAPIContext, ICardAPI } from '../../CardsAPI/CardAPI';
+import { boardComponentContext, IBoardComponentContext } from '../Board';
+import ICard from '../../../interface/ICard';
 
-export interface ICardProps {
-    id: string,
-    title: string,
-    type: ECardType,
-    description: string,
-    storyPoints: number
-}
+export default function Card(props: ICard) {
 
-export default function Card(props: ICardProps) {
-
-    const { setSelectedCards } = useContext(cardAPIContext) as ICardAPI;
-    const { openCardEdit } = useContext(boardComponentContext) as IBoardComponentContext;
+    const { addCardToSelectSet } = useContext(cardAPIContext) as ICardAPI;
+    const { openEditPage } = useContext(boardComponentContext) as IBoardComponentContext;
 
     function handleDragStart(ev: React.DragEvent<HTMLDivElement>) {
         const element = ev.target as HTMLDivElement;
@@ -27,8 +19,8 @@ export default function Card(props: ICardProps) {
     }
 
     function onEditClicked() {
-        setSelectedCards(getTestTodoCards());
-        openCardEdit();
+        addCardToSelectSet(props);
+        openEditPage();
     }
 
     let cardTypeIconComponent: React.ReactNode;
@@ -40,13 +32,13 @@ export default function Card(props: ICardProps) {
             cardTypeIconComponent = <FaBug className={`${Style['icon']} ${Style['danger-icon']}`} />;
             break;
         default:
-            console.error("encountered a card with id: ", props.id, " which is of type: '",props.type,"' a card cannot be of this type");
+            console.error("encountered a card with id: ", props.uuid, " which is of type: '",props.type,"' a card cannot be of this type");
             break;
     }
 
     return(
         <div 
-            id={props.id}
+            id={props.uuid}
             className={`card ${Style['card']} ${Style[`card-${props.type}`]} is-primary`} 
             draggable="true" 
             onDragStart={(ev) => handleDragStart(ev)} 

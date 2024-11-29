@@ -6,6 +6,7 @@
         "kanbanplus",
         "luxon",
         "streamsaver",
-        "uuidv4"
+        "uuidv4",
+        "Xmark"
     ]
 }

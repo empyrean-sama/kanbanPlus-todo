@@ -1,8 +1,8 @@
 import React, { HTMLAttributes, PropsWithChildren, useContext, useEffect } from 'react';
 import Style from './Column.module.scss';
 
-import { boardComponentContext, IBoardComponentContext } from './Board';
-import ECardState from '../../Enum/ECardState';
+import { boardComponentContext, IBoardComponentContext } from '../Board';
+import ECardState from '../../../Enum/ECardState';
 
 export interface IColumnProps extends HTMLAttributes<HTMLDivElement> {
     title: string,

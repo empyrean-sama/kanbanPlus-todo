@@ -1,12 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
-import Style from './Board.module.scss';
-
-import Column from './Column';
-import Card from './Card';
-
-import ECardState from '../../Enum/ECardState';
 import { cardAPIContext, ICardAPI } from '../CardsAPI/CardAPI';
-import EditCard from './EditCard';
+import ECardState from '../../Enum/ECardState';
+
+import EditPage from './EditPage/EditPage';
+import ColumnPage from './ColumnPage/ColumnPage';
 
 export interface IBoardComponentContext {
     /**
@@ -18,24 +15,22 @@ export interface IBoardComponentContext {
     moveCard(cardId: string, state: ECardState, clientY: number): void;
 
     /**
-     * Open the card edit window
+     * Open the card edit page
      */
-    openCardEdit(): void,
+    openEditPage(): void,
 
     /**
-     * Close the card edit window
+     * Close the card edit page
      */
-    closeCardEdit(): void,
+    closeEditPage(): void,
 }
 export const boardComponentContext = createContext<IBoardComponentContext | undefined>(undefined);
 
 export default function Board() {
 
-    const [ showEditCard, setShowEditCard ] = useState(false);
-
-    const { getAllCards, setCardState, setCards } = useContext(cardAPIContext) as ICardAPI;
-    const cards = getAllCards();
-
+    const [ showEditPage, setShowEditPage ] = useState(false);
+    const { setCardState, setCards } = useContext(cardAPIContext) as ICardAPI;
+    
     function moveCard(id: string, state: ECardState, dropY: number): void {
         const columnCards: HTMLDivElement[] = [...(document.getElementById(`column-${state}`) as HTMLDivElement).children[1].children] as HTMLDivElement[];
         if(columnCards.length === 0) {
@@ -92,31 +87,17 @@ export default function Board() {
         }        
     }
 
-    function openCardEdit() {
-        setShowEditCard(true);
+    function openEditPage() {
+        setShowEditPage(true);
     }
-
-    function closeCardEdit() {
-        setShowEditCard(false);
+    function closeEditPage() {
+        setShowEditPage(false);
     }
 
     return (
-        <boardComponentContext.Provider value={{moveCard, openCardEdit, closeCardEdit}}>
-            {showEditCard ? <EditCard  /> : undefined}
-            <div className={`${Style['column-holder']}`}>
-                <Column id={`column-${ECardState.todo}`} title='Todo' associatedState={ECardState.todo}>
-                    {cards.filter((card) => card.state === ECardState.todo).map((card) => <Card key={card.uuid} id={card.uuid} type={card.type} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }    
-                </Column>
-                <Column id={`column-${ECardState.doing}`} title='Doing' associatedState={ECardState.doing}>
-                    {cards.filter((card) => card.state === ECardState.doing).map((card) => <Card key={card.uuid} id={card.uuid} type={card.type} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }
-                </Column>
-                <Column id={`column-${ECardState.done}`} title='Done' associatedState={ECardState.done}>
-                    {cards.filter((card) => card.state === ECardState.done).map((card) => <Card key={card.uuid} id={card.uuid} type={card.type} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }
-                </Column>
-                <Column id={`column-${ECardState.regression}`} title='Regression' associatedState={ECardState.regression}>
-                    {cards.filter((card) => card.state === ECardState.regression).map((card) => <Card key={card.uuid} id={card.uuid} type={card.type} title={card.title} description={card.description} storyPoints={card.storyPoints} />) }
-                </Column>
-            </div>
+        <boardComponentContext.Provider value={{moveCard, openEditPage, closeEditPage}}>
+            {showEditPage ? <EditPage /> : undefined }
+            <ColumnPage />
         </boardComponentContext.Provider>
     );
 }

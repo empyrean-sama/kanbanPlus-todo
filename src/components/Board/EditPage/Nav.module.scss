@@ -1,0 +1,33 @@
+.task-card {
+    --edit-card-nav-background-color: var(--bulma-success);
+    --edit-card-nav-text-color: var(--bulma-black);
+}
+
+.regression-card {
+    --edit-card-nav-background-color: var(--bulma-danger);
+    --edit-card-nav-text-color: var(--bulma-light);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    background-color: var(--edit-card-nav-background-color);
+    color: var(--edit-card-nav-text-color);
+}
+
+.input {
+    background-color: var(--edit-card-nav-background-color);
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.close {
+    cursor: pointer;
+    line-height: 0;
+    svg {
+        width: 32px;
+    }
+}
