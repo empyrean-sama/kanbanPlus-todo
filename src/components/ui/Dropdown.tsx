@@ -26,6 +26,17 @@ export interface IDropdownProps {
     initialActiveId?: string,
 
     /**
+     * The dropdown will be disabled if this prop is passed in as true
+     */
+    disabled?: boolean
+
+    /**
+     * If set to true, the dropdown will occupy entire width of the div it is in by setting the property width: 100%
+     * ? useful when trying to align widths with other input elements
+     */
+    spanFullWidth?: boolean
+
+    /**
      * Triggered once every time the user selects a new dropdown item
      * @param selectedId: the newly selected dropdown item id
      * @returns nothing
@@ -47,7 +58,7 @@ export interface IDropdownImperativeHandle {
     getActiveChildId(): string
 }
 
-export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<IDropdownProps>>(function({placeholder, id, labelId, initialActiveId, onSelect, children}, ref) {
+export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<IDropdownProps>>(function({placeholder, id, labelId, initialActiveId, spanFullWidth, onSelect, disabled, children}, ref) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [activeChildId, setActiveChildId] = useState(initialActiveId || "");
@@ -73,14 +84,14 @@ export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<
     const ArrowComponent = isOpen ? FaAngleUp : FaAngleDown;
 
     return(
-        <div className={`dropdown ${isOpen ? 'is-active' : ''}`} id={id? id: undefined}>
-            <div className="dropdown-trigger">
-                <button className={`button ${Style['dropdown-button']}`} id={labelId} aria-haspopup="true" onClick={() => setIsOpen((prevState) => !prevState)}>
+        <div className={`dropdown ${isOpen ? 'is-active' : ''} ${spanFullWidth ? Style['spanFullWidth'] : ''}`} id={id? id: undefined}>
+            <div className={`dropdown-trigger ${spanFullWidth ? Style['spanFullWidth'] : ''}`}>
+                <button disabled={disabled} className={`button ${Style['dropdown-button']} ${spanFullWidth ? Style['spanFullWidth'] : ''}`} id={labelId} aria-haspopup="true" onClick={() => setIsOpen((prevState) => !prevState)}>
                     <span className="mr-2">{activeChildId ? activeChildId : placeholder}</span>
                     <ArrowComponent />
                 </button>
             </div>
-            <div className={`dropdown-menu ${Style['dropdown-menu']}`} role="menu">
+            <div className={`dropdown-menu ${Style['dropdown-menu']} ${spanFullWidth ? Style['spanFullWidth'] : ''}`} role="menu">
                 <div className="dropdown-content">
                     <dropdownContext.Provider value={{activeChildId, setActiveChildId, closeDropdown, onSelect}}>
                         {children}

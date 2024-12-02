@@ -1,0 +1,15 @@
+.field-section {
+    display: flex;
+    & > div {
+        flex: 1 1 50%;
+    }
+}
+
+.left-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;}
+
+.right-column {
+    background-color: coral;
+}

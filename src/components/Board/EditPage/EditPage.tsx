@@ -5,9 +5,8 @@ import { cardAPIContext, ICardAPI } from "../../CardsAPI/CardAPI";
 
 import Nav from "./Nav";
 import ICard from "../../../interface/ICard";
-import { ECardType } from "../../../Enum/ECardType";
 import { boardComponentContext, IBoardComponentContext } from "../Board";
-import ECardState from "../../../Enum/ECardState";
+import Fields from "./Fields";
 
 export interface IEditPageContext {
 
@@ -62,11 +61,12 @@ export default function EditCard() {
         setCard(cardCopy);
         setSaveEnabled(true);
     }
-    
+
     return (
         <editPageContext.Provider value={{getEditCard, setEditCard, handleSave, handleClose}}>
             <div className={Style['fixed-full-page']}>
                 <Nav saveEnabled={saveEnabled} />
+                <Fields />
             </div>
         </editPageContext.Provider>
     );

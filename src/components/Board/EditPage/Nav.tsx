@@ -1,17 +1,13 @@
 import React, { useContext, useState } from 'react';
 import Style from './Nav.module.scss';
-
-import { cardAPIContext, ICardAPI } from '../../CardsAPI/CardAPI';
-import { boardComponentContext, IBoardComponentContext } from '../Board';
 import { editPageContext, IEditPageContext } from './EditPage';
 
-import ICard from '../../../interface/ICard';
 import { ECardType } from '../../../Enum/ECardType';
-import { FaXmark } from 'react-icons/fa6';
 import { Dropdown, DropdownItem } from '../../ui/Dropdown';
-import ECardState from '../../../Enum/ECardState';
+import ECardState, { strToECardState } from '../../../Enum/ECardState';
 import Button, { EButtonFace } from '../../ui/Button';
-import StateDropdown from './StateDropdown';
+import LabeledDropdown from '../../ui/LabeledDropdown';
+import capitalize from 'just-capitalize';
 
 export default function EditCardNav({ saveEnabled }: {saveEnabled: boolean}): React.ReactNode {
     const { getEditCard, setEditCard, handleClose, handleSave } = useContext(editPageContext) as IEditPageContext;
@@ -25,7 +21,22 @@ export default function EditCardNav({ saveEnabled }: {saveEnabled: boolean}): Re
                 />
             </div>
             <div className={Style['state-rack']}>
-                <StateDropdown />
+                <LabeledDropdown 
+                    label="State"
+                    id="state-dropdown-editPage" 
+                    placeholder='undefined' 
+                    initialActiveId={capitalize(getEditCard().state)} 
+                    onSelect={(selectedId) => setEditCard((card) => card.state = strToECardState(selectedId))}
+                    spanFullWidth={false}
+                >
+                    {
+                        (getEditCard().type === ECardType.regression) ? 
+                            <DropdownItem id={capitalize(ECardState.regression)}>Regression</DropdownItem> : 
+                            <DropdownItem id={capitalize(ECardState.todo)}>Todo</DropdownItem>
+                    }
+                    <DropdownItem id={capitalize(ECardState.doing)}>Doing</DropdownItem>
+                    <DropdownItem id={capitalize(ECardState.done)}>Done</DropdownItem>
+                </LabeledDropdown>
                 <div className={Style['exit-rack']}>
                     <Button face={EButtonFace.link} onClick={handleSave} disabled={!saveEnabled}>Save</Button>
                     <Button face={EButtonFace.danger} onClick={handleClose}>Close</Button>
