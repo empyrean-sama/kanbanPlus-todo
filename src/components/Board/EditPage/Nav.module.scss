@@ -16,7 +16,6 @@
 
 .title-rack {
     background-color: var(--edit-card-nav-background-color);
-    color: var(--edit-card-nav-text-color);
 }
 
 .state-rack {
@@ -31,9 +30,9 @@
     column-gap: var(--spacing-02);
 }
 
-
 .input {
     background-color: var(--edit-card-nav-background-color);
+    color: var(--edit-card-nav-text-color);
     border: none;
     box-shadow: none;
 }
