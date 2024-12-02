@@ -4,7 +4,8 @@ import Style from './Dropdown.module.scss';
 
 export interface IDropdownProps {
     placeholder: string
-    id?: string
+    id?: string,
+    initialActiveId?: string
 }
 
 export interface IDropdownContext {
@@ -20,10 +21,10 @@ export interface IDropdownImperativeHandle {
     getActiveChildId(): string
 }
 
-export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<IDropdownProps>>(function({placeholder, id, children}, ref) {
+export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<IDropdownProps>>(function({placeholder, id, initialActiveId, children}, ref) {
 
     const [isOpen, setIsOpen] = useState(false);
-    const [activeChildId, setActiveChildId] = useState("");
+    const [activeChildId, setActiveChildId] = useState(initialActiveId || "");
 
     useImperativeHandle(ref, () => {
         return {
