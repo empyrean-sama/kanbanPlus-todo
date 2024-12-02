@@ -29,7 +29,7 @@ export const boardComponentContext = createContext<IBoardComponentContext | unde
 export default function Board() {
 
     const [ showEditPage, setShowEditPage ] = useState(false);
-    const { setCardState, setCards } = useContext(cardAPIContext) as ICardAPI;
+    const { setCardState, setCards, getCardsSelected } = useContext(cardAPIContext) as ICardAPI;
     
     function moveCard(id: string, state: ECardState, dropY: number): void {
         const columnCards: HTMLDivElement[] = [...(document.getElementById(`column-${state}`) as HTMLDivElement).children[1].children] as HTMLDivElement[];
@@ -96,7 +96,7 @@ export default function Board() {
 
     return (
         <boardComponentContext.Provider value={{moveCard, openEditPage, closeEditPage}}>
-            {showEditPage ? <EditPage /> : undefined }
+            {(showEditPage && getCardsSelected().length > 0) ? <EditPage /> : undefined }
             <ColumnPage />
         </boardComponentContext.Provider>
     );

@@ -10,24 +10,33 @@
 
 .header {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: center;
-    
+}
+
+.title-rack {
     background-color: var(--edit-card-nav-background-color);
     color: var(--edit-card-nav-text-color);
 }
 
+.state-rack {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-02) var(--spacing-04);
+    background-color: var(--bulma-black);
+}
+
+.exit-rack {
+    display: flex;
+    column-gap: var(--spacing-02);
+}
+
+
 .input {
     background-color: var(--edit-card-nav-background-color);
     border: none;
-    outline: none;
     box-shadow: none;
 }
-
-.close {
-    cursor: pointer;
-    line-height: 0;
-    svg {
-        width: 32px;
-    }
+.input:hover {
+    box-shadow: none;
 }

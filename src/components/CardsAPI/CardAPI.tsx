@@ -1,4 +1,5 @@
 import React, { createContext, ReactNode, useEffect, useState } from "react";
+import clone from "just-clone";
 import ICard, { getTestTodoCards } from '../../interface/ICard';
 import ECardState from "../../Enum/ECardState";
 export interface ICardAPI {
@@ -19,7 +20,16 @@ export interface ICardAPI {
      * Get all cards on the board
      * @returns an array containing all the cards
      */
-    getAllCards(): ICard[]
+    getAllCards(): ICard[],
+
+    /**
+     * Replace a card on the board with a new card
+     * ? The uuid is taken into account while trying to replace the card
+     * ? This method is useful say in the edit page, the edit page can hold a copy to allow closing without saving easier
+     * ! The existence of this method may lead to bugs down the line as it is implicitly agreed that two different objects can share the same uuid
+     * @param newCard: The new card object to replace the old card object with 
+     */
+    replaceCard(newCard: ICard): void,
 
     /**
      * Get the currently selected card
@@ -94,6 +104,17 @@ export default function CardAPI({children}: {children: ReactNode}) {
         return cards;
     }
 
+    function replaceCard(newCard: ICard): void {
+        setCards((prevState) => {
+            return prevState.map((card) => {
+                if(card.uuid === newCard.uuid) {
+                    card = clone(newCard);
+                }
+                return card;
+            });
+        });
+    }
+
     function getCardsSelected(): ICard[] {
         return cards.filter((card) => selectedCardsSet.has(card.uuid));
     }
@@ -121,7 +142,7 @@ export default function CardAPI({children}: {children: ReactNode}) {
     return(
         <cardAPIContext.Provider value={
                 {
-                    setCardState, getAllCardIds, getAllCards, setCards, 
+                    setCardState, getAllCardIds, getAllCards, replaceCard, setCards,
                     getCardsSelected, setCardsSelected, clearCardsSelectSet, addCardToSelectSet, removeCardFromSelectSet, onSelectSetChange
                 }}>
             {children}

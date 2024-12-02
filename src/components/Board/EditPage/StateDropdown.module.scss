@@ -1,0 +1,9 @@
+.span {
+    display: flex;
+    align-items: center;
+    column-gap: var(--spacing-02);
+}
+
+.label {
+    cursor: pointer;
+}
