@@ -10,47 +10,18 @@ import { boardComponentContext, IBoardComponentContext } from "../Board";
 import ECardState from "../../../Enum/ECardState";
 
 export interface IEditPageContext {
-    /**
-     * Get the title on the card currently being edited
-     * @throws an error if there is no card to get the title
-     * @returns the title as string
-     */
-    getTitle(): string,
 
     /**
-     * Set the title of the card being edited
-     * @param title: the new title of this card
-     * @throws an error if no card is being edited
+     * Get the card being edited
      */
-    setTitle(title: string): void,
+    getEditCard(): ICard,
 
     /**
-     * Get the type on the card currently being edited
-     * @throws an error if there is no card to get the type from
-     * @returns the type as an enum
+     * Set value on the card being edited
+     * ? the callback provides an object which is expected to be modified
+     * @param callback: the callback provides the current state of the card being edited, I can make changes to it 
      */
-    getType(): ECardType,
-
-    /**
-     * Set the type of the card being edited
-     * @param type: the new type of this card
-     * @throws an error if no card is being edited
-     */
-    setType(type: ECardType): void,
-
-    /**
-     * Get the state of the card being edited
-     * @returns the state as the ECardState enum
-     * @throws an error if no card is being edited
-     */
-    getState(): ECardState,
-
-    /**
-     * Set the state of the card being edited
-     * @param state to be set on the card being edited
-     * @throws an error if no card is being edited
-     */
-    setState(state: ECardState): void,
+    setEditCard(callback: (editCard: ICard) => void): void,
 
     /**
      * Close down the edit page without saving any changes made
@@ -81,67 +52,19 @@ export default function EditCard() {
         replaceCard(card);
     }
 
-    function getTitle(): string {
-        if(card) {
-            return card.title;
-        }
-        throw new Error('Error in edit page component, trying to get the title of null (there is no card set as being edited)');
+    function getEditCard(): ICard {
+        return card;
     }
 
-    function setTitle(title: string) {
-        setCard((prevState: ICard | null) => {
-            if(!prevState) {
-                throw new Error('Error in edit page component, trying to set the title of a non existent card');
-            }
-            setSaveEnabled(true);  
-            return {
-                ...prevState,
-                title
-            };
-        });
+    function setEditCard(callback: (cardState: ICard) => void) {
+        const cardCopy = clone(card);
+        callback(cardCopy);
+        setCard(cardCopy);
+        setSaveEnabled(true);
     }
-
-    function getType(): ECardType {
-        if(card) {
-            return card.type;
-        }
-        throw new Error('Error in edit page component, trying to get the ECardType of null (there is no card set as being edited)')
-    }
-
-    function setType(type: ECardType) {
-        setCard((prevState: ICard | null) => {
-            if(!prevState) {
-                throw new Error('Error in edit page component, trying to set the type of a non existent card');
-            }
-            return {
-                ...prevState,
-                type
-            };
-        });
-    }
-
-    function getState(): ECardState {
-        if(card) {
-            return card.state;
-        }
-        throw new Error('Error in edit page component, trying to get the state of null (there is no card set as being edited)')
-    }
-
-    function setState(state: ECardState) {
-        setCard((prevState: ICard | null) => {
-            if(!prevState) {
-                throw new Error('Error in edit page component, trying to set the state of a non existent card');
-            }
-            setSaveEnabled(true);
-            return {
-                ...prevState,
-                state
-            };
-        });
-    }
-
+    
     return (
-        <editPageContext.Provider value={{getTitle, setTitle, setType, getType, getState, setState, handleSave, handleClose}}>
+        <editPageContext.Provider value={{getEditCard, setEditCard, handleSave, handleClose}}>
             <div className={Style['fixed-full-page']}>
                 <Nav saveEnabled={saveEnabled} />
             </div>

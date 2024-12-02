@@ -14,14 +14,14 @@ import Button, { EButtonFace } from '../../ui/Button';
 import StateDropdown from './StateDropdown';
 
 export default function EditCardNav({ saveEnabled }: {saveEnabled: boolean}): React.ReactNode {
-    const { getTitle, setTitle, getType, handleClose, handleSave } = useContext(editPageContext) as IEditPageContext;
+    const { getEditCard, setEditCard, handleClose, handleSave } = useContext(editPageContext) as IEditPageContext;
     
     return (
-        <header className={`${Style['header']} ${getType() === ECardType.task ? Style['task-card'] : Style['regression-card']}`}>
+        <header className={`${Style['header']} ${getEditCard().type === ECardType.task ? Style['task-card'] : Style['regression-card']}`}>
             <div className={Style['title-rack']}>
                 <input 
                     className={`${Style['input']} input is-size-4`} type="text" 
-                    placeholder="Card Title" value={getTitle()} onChange={(ev) => setTitle(ev.target.value)} 
+                    placeholder="Card Title" value={getEditCard().title} onChange={(ev) => setEditCard((card) => card.title = ev.target.value)} 
                 />
             </div>
             <div className={Style['state-rack']}>

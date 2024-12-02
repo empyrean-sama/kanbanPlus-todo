@@ -9,7 +9,7 @@ import { ECardType } from "../../../Enum/ECardType";
 
 export default function StateDropdown() {
 
-    const { getState, setState, getType } = useContext(editPageContext) as IEditPageContext
+    const { getEditCard, setEditCard } = useContext(editPageContext) as IEditPageContext
 
     return(
         <span className={`${Style['span']}`}>
@@ -17,10 +17,10 @@ export default function StateDropdown() {
             <Dropdown 
                 placeholder='undefined' 
                 labelId="state-dropdown-editPage" 
-                initialActiveId={capitalize(getState())} onSelect={(selectedId) => setState(strToECardState(selectedId))}
+                initialActiveId={capitalize(getEditCard().state)} onSelect={(selectedId) => setEditCard((card) => card.state = strToECardState(selectedId))}
             >
                 {
-                    (getType() === ECardType.regression) ? 
+                    (getEditCard().type === ECardType.regression) ? 
                         <DropdownItem id={capitalize(ECardState.regression)}>Regression</DropdownItem> : 
                         <DropdownItem id={capitalize(ECardState.todo)}>Todo</DropdownItem>
                 }
