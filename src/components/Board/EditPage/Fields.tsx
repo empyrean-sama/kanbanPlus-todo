@@ -3,7 +3,7 @@ import Style from "./Fields.module.scss";
 import LabeledTextInput from "../../ui/LabeledTextInput";
 import { DropdownItem } from "../../ui/Dropdown";
 import LabeledDropdown from "../../ui/LabeledDropdown";
-import { flatMap } from "cypress/types/lodash";
+import DateTimePicker from "../../ui/DateTimePicker";
 
 export default function Fields() {
     return(
@@ -24,7 +24,7 @@ export default function Fields() {
                 <LabeledTextInput label="StoryPoints" />
             </div>
             <div className={Style['right-column']}>
-
+                <DateTimePicker id="pick due date" selectTime={false} spanFullWidth={true}/>
             </div>
         </section>
     )

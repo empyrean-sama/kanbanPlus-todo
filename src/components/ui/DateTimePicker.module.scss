@@ -1,0 +1,56 @@
+.DateTimePlaceholder {
+    display: flex;
+    column-gap: var(--spacing-04);
+}
+
+.month-year-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.button-rack {
+    display: flex;
+    column-gap: var(--spacing-02);
+}
+
+.display-rack {
+    display: flex;
+    column-gap: var(--spacing-02);
+    align-items: center;
+}
+
+.day-selector {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--spacing-01);
+}
+
+.day-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.day-box {
+    --color-text-day-box: var(--color-white);
+    --color-selected-background: var(--color-link);
+
+    flex: 1 1 100%;
+    max-width: 52.4px; // todo: refactor the design to not set max-width of stuff, this will cause terrible issues when scaling
+    cursor: pointer;
+    color: var(--color-text-day-box);
+
+    display: flex;
+    justify-content: center;
+
+    &.color-danger {
+        --color-text-day-box: var(--color-danger);
+        --color-selected-background: var(--color-danger)
+    }
+
+    &.selected {
+        background-color: var(--color-selected-background);
+        color: var(--color-white);
+    }
+}

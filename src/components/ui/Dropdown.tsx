@@ -5,9 +5,10 @@ import Style from './Dropdown.module.scss';
 export interface IDropdownProps {
 
     /**
-     * Placeholder string will be displayed when no dropdown item is selected
+     * Placeholder will be displayed when no dropdown item is selected
+     * ? In most cases a string will suffice, can provide a react node when special formatting is required
      */
-    placeholder: string
+    placeholder: string | React.ReactNode
 
     /**
      * The id attribute to be set on this Dropdown component
@@ -37,6 +38,13 @@ export interface IDropdownProps {
     spanFullWidth?: boolean
 
     /**
+     * ? spanFullWidth must be set to true for this to take effect,
+     * ? will default to whatever spanFullwidth is set to if not set
+     * ? can be explicitly set to false if you don't want the dropdown menu to span to 100% width like in date time picker 
+     */
+    canContentSpanFullWidth?: boolean
+
+    /**
      * Triggered once every time the user selects a new dropdown item
      * @param selectedId: the newly selected dropdown item id
      * @returns nothing
@@ -58,10 +66,14 @@ export interface IDropdownImperativeHandle {
     getActiveChildId(): string
 }
 
-export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<IDropdownProps>>(function({placeholder, id, labelId, initialActiveId, spanFullWidth, onSelect, disabled, children}, ref) {
+export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<IDropdownProps>>(function({placeholder, id, labelId, initialActiveId, spanFullWidth, canContentSpanFullWidth, onSelect, disabled, children}, ref) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [activeChildId, setActiveChildId] = useState(initialActiveId || "");
+
+    if(canContentSpanFullWidth === undefined || canContentSpanFullWidth === null) {
+        canContentSpanFullWidth = spanFullWidth;
+    }
 
     useImperativeHandle(ref, () => {
         return {
@@ -91,7 +103,7 @@ export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<
                     <ArrowComponent />
                 </button>
             </div>
-            <div className={`dropdown-menu ${Style['dropdown-menu']} ${spanFullWidth ? Style['spanFullWidth'] : ''}`} role="menu">
+            <div className={`dropdown-menu ${Style['dropdown-menu']} ${spanFullWidth && canContentSpanFullWidth ? Style['spanFullWidth'] : ''}`} role="menu">
                 <div className="dropdown-content">
                     <dropdownContext.Provider value={{activeChildId, setActiveChildId, closeDropdown, onSelect}}>
                         {children}

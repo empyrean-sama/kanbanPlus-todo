@@ -13,7 +13,9 @@ export enum EButtonFace {
     text = "is-text",
     ghost = "is-ghost",
     light = "is-light",
-    dark = "is-dark"
+    dark = "is-dark",
+
+    none = "is-none"
 }
 
 export enum EButtonSize {
