@@ -24,7 +24,7 @@ export default function Fields() {
                 <LabeledTextInput label="StoryPoints" />
             </div>
             <div className={Style['right-column']}>
-                <DateTimePicker id="pick due date" selectTime={false} spanFullWidth={true}/>
+                <DateTimePicker id="pick due date" selectTime={true} spanFullWidth={true}/>
             </div>
         </section>
     )

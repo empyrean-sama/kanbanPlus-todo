@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState } from "react";
 import Style from "./DateTimePicker.module.scss";
-import { Dropdown, DropdownItem } from "./Dropdown";
+import { Dropdown, DropdownDivider, DropdownItem } from "./Dropdown";
 import { DateTime, DateTimeUnit, MonthNumbers } from "luxon";
 import { FaAnglesRight, FaAngleRight, FaAnglesLeft, FaAngleLeft } from "react-icons/fa6";
 import Button, { EButtonFace, EButtonSize } from "./Button";
 import clone from "just-clone"
+
+import { FaAngleUp, FaAngleDown } from "react-icons/fa6";
 
 const MAX_DISPLAY_DATE_TIME_YEAR = 2040;
 const MIN_DISPLAY_DATE_TIME_YEAR = 1940;
@@ -31,12 +33,20 @@ function DateTimePlaceholder({date, time}: {date: string, time?: string}) {
 
 class KanbanDateTime {
 
-    private _day: number = 9;
-    private _month: number;
-    private _year: number;
-    private _hour: number = 0;
-    private _minute: number = 0;
-    private _isAm: boolean | undefined = undefined;
+    private _day:    number;
+    private _month:  number;
+    private _year:   number;
+    private _hour:   number;
+    private _minute: number;
+    private _isAm:   boolean;
+
+    /**
+     * Utility method useful while trying to set state
+     * @returns a new KanbanDateTime object with identical fields to this object
+     */
+    public clone(): KanbanDateTime {
+        return new KanbanDateTime(this.getDay(), this.getMonth(), this.getYear(), this.getHour(), this.getMinute(), this.getIsAm());
+    }
 
     /**
      * Utility to construct a luxon DateTime object out of this object data
@@ -55,7 +65,7 @@ class KanbanDateTime {
         this._year = year || Number.NaN;
         this._hour = hour || 0;
         this._minute = minute || 0;
-        this._isAm = isAm || true;
+        this._isAm = (isAm === null || isAm === undefined)? true : isAm;
     }
 
     /**
@@ -113,6 +123,16 @@ class KanbanDateTime {
     public getYear(): number {
         return this._year;
     }
+    /**
+     * Set the year field
+     * @param year to set the year field with
+     * @returns this for easy chaining operations
+     */
+    public setYear(year: number): KanbanDateTime {
+        this._year = year;
+        return this;
+    }
+
 
     /**
      * Get the month field
@@ -120,6 +140,15 @@ class KanbanDateTime {
      */
     public getMonth(): number {
         return this._month;
+    }
+    /**
+     * Set the month field
+     * @param month to set the month field with
+     * @returns this for easy chaining operations
+     */
+    public setMonth(month: number): KanbanDateTime {
+        this._month = month;
+        return this;
     }
 
     /**
@@ -129,29 +158,73 @@ class KanbanDateTime {
     public getDay(): number {
         return this._day
     }
-
     /**
-     * Get the hours field
-     * @returns the hours field
+     * Set the day field
+     * @param day to set the day field with
+     * @returns this for easy chaining operations
      */
-    public getHours(): number {
-        return this._hour;
+    public setDay(day: number): KanbanDateTime {
+        this._day = day;
+        return this;
     }
 
+    /**
+     * Get the hour field
+     * @returns the hour field
+     */
+    public getHour(): number {
+        return this._hour;
+    }
+    /**
+     * Set the hour field
+     * @param calculateHour is a simple function that will allow the user to set the hour based on what is already inside the class
+     * @returns this for easy chaining operations
+     */
+    public setHour(calculateHour: (currentHour: number) => number): KanbanDateTime {
+        this._hour = calculateHour(this._hour);
+        return this;
+    }
+    
     /**
      * Get the minutes field
      * @returns the minutes field
      */
-    public getMinutes(): number {
+    public getMinute(): number {
         return this._minute;
+    }
+    /**
+     * Set the minute field
+     * @param calculateMinute is a simple function that will allow the user to set the minute based on what is already inside the class
+     * @returns this for easy chaining operations
+     */
+    public setMinute(calculateMinute: (currentMinute: number) => number): KanbanDateTime {
+        this._minute = calculateMinute(this._minute);
+        return this;
     }
 
     /**
      * Get the isAm field
      * @returns the isAm field
      */
-    public isAm(): boolean | undefined {
+    public getIsAm(): boolean {
         return this._isAm;
+    }
+    /**
+     * Set the isAm field
+     * @param isAm to set the isAm field with
+     * @returns this for easy chaining operations
+     */
+    public setIsAm(isAm: boolean): KanbanDateTime {
+        this._isAm = isAm;
+        return this;
+    }
+    /**
+     * Toggle the isAm field
+     * @returns this for easy chaining operations
+     */
+    public toggleIsAm(): KanbanDateTime {
+        this._isAm = !(this._isAm);
+        return this;
     }
 }
 
@@ -234,7 +307,7 @@ export default function DateTimePicker(props: IDateTimePickerProps) {
     
     const [dateTime, setDateTime] = useState(new KanbanDateTime());
     const [displayDateTime, setDisplayDateTime] = useState(DateTime.now());
-    
+ 
     function handleNextMonthClicked(ev: React.MouseEvent<HTMLButtonElement>) {
         setDisplayDateTime((prevState) => prevState.plus({month: 1}));
     }
@@ -258,6 +331,39 @@ export default function DateTimePicker(props: IDateTimePickerProps) {
     function handleDisableMonthBackward(): boolean {
         return (displayDateTime.year < MIN_DISPLAY_DATE_TIME_YEAR && displayDateTime.month === 1)
     }
+
+    function handleHourIncrease() {
+        setDateTime((prevState) => prevState.clone().setHour((currentHour: number) => (currentHour + 1) % 13));
+    }
+
+    function handleHourDecrease() {
+        setDateTime((prevState) => prevState.clone().setHour((currentHour: number) => Math.max((currentHour - 1) % 13, 0)));
+    }
+
+    function handleMinuteIncrease() {
+        setDateTime((prevState) => prevState.clone().setMinute((currentMinute: number) => (currentMinute + 1) % 60));
+    }
+
+    function handleMinuteDecrease() {
+        setDateTime((prevState) => prevState.clone().setMinute((currentMinute: number) => Math.max((currentMinute - 1) % 60, 0)));
+    }
+
+    function handleMeridiemChange() {
+        setDateTime((prevState) => {
+            const isAm = prevState.getIsAm();
+            return prevState.clone().setIsAm(!isAm);
+        });
+    }
+
+    function handleSelectToday() {
+        const dt = DateTime.now();
+        const isAm = dt.hour < 12
+        setDateTime(new KanbanDateTime(dt.day, dt.month, dt.year, isAm ? dt.hour : dt.hour - 12, dt.minute, isAm))
+    }
+
+    function handleClearDate() {
+        setDateTime(new KanbanDateTime())
+    }
     
     function getSelectedDate(): {year: number, month: number, date: number} | null {
         if(dateTime.getYear() && dateTime.getMonth() && dateTime.getDay()) {
@@ -267,9 +373,7 @@ export default function DateTimePicker(props: IDateTimePickerProps) {
     }
 
     function setSelectedDate(year: number, month: MonthNumbers, date: number) {
-        setDateTime((prevState) => {
-            return new KanbanDateTime(date, month, year, prevState.getHours(), prevState.getMinutes(), prevState.isAm());
-        });
+        setDateTime((prevState) => prevState.clone().setDay(date).setMonth(month).setYear(year));
     }
 
     function getDisplayDate(): {year: number, month: number} {
@@ -308,6 +412,31 @@ export default function DateTimePicker(props: IDateTimePickerProps) {
                         <span className={`${Style['color-danger']} ${Style['day-box']}`}>Sun</span>
                     </span>
                     {[1,2,3,4,5,6].map((weekNumber: number) => <WeekEntry weekNumber={weekNumber} key={`${weekNumber} ${props.id} Week Entry`} />)}
+                </DropdownItem>
+                <DropdownDivider />
+                <DropdownItem id="time-and-functions-selector" className={`${Style["row"]} ${Style["spacing-02"]}`} selectable={false}>
+                    {props.selectTime ? <div id="time-selector" className={`${Style["row"]} ${Style["center-align"]}`}>
+                        <div className={`${Style["hour-selector"]} ${Style["column"]}`}>
+                            <Button face={EButtonFace.none} onClick={handleHourIncrease}><FaAngleUp /></Button>
+                            {dateTime.getHour().toString().padStart(2,'0')}
+                            <Button face={EButtonFace.none} onClick={handleHourDecrease}><FaAngleDown /></Button>
+                        </div>
+                        <span className={`${Style["hour-minute-separator"]}`}>:</span>
+                        <div className={`${Style["minute-selector"]} ${Style["column"]}`}>
+                            <Button face={EButtonFace.none} onClick={handleMinuteIncrease}><FaAngleUp /></Button>
+                            {dateTime.getMinute().toString().padStart(2,'0')}
+                            <Button face={EButtonFace.none} onClick={handleMinuteDecrease}><FaAngleDown /></Button>
+                        </div>
+                        <div className={`${Style["am-pm-selector"]} ${Style["column"]}`}>
+                            <Button face={EButtonFace.none} onClick={handleMeridiemChange}><FaAngleUp /></Button>
+                            {dateTime.getIsAm() ? <span className={`${Style["am-pm-text"]}`}>AM</span> : <span className={`${Style["am-pm-text"]}`}>PM</span>}
+                            <Button face={EButtonFace.none} onClick={handleMeridiemChange}><FaAngleDown /></Button>
+                        </div>
+                    </div> : undefined}
+                    <div id="time-selector-functions" className={`${Style["row"]} ${Style["spacing-01"]} ${Style["time-selector-functions"]}`}>
+                        <Button face={EButtonFace.link} onClick={handleSelectToday}>Today</Button>
+                        <Button face={EButtonFace.danger} onClick={handleClearDate}>Clear</Button>
+                    </div>
                 </DropdownItem>
             </DateTimePickerContext.Provider>
         </Dropdown>
@@ -350,8 +479,6 @@ function DateEntry({rowNumber, columnNumber, dateEntryColor}: IDateEntryProps) {
     const dateTimePickerContext = useContext(DateTimePickerContext) as IDateTimePickerContext;
     const displayDate = dateTimePickerContext.getDisplayDate();
     const selectedDate = dateTimePickerContext.getSelectedDate();
-
-    console.log('selected date: ', selectedDate);
 
     function handleClick() {
         dateTimePickerContext.setSelectedDate(displayDate.year, displayDate.month as MonthNumbers, getDate(displayDate.year, displayDate.month, rowNumber, columnNumber) as number);

@@ -54,3 +54,30 @@
         color: var(--color-white);
     }
 }
+
+.column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    &.center-align {
+        align-items: center;
+    }
+    &.spacing-01 {
+        column-gap: var(--spacing-01);
+    }
+    &.spacing-02 {
+        column-gap: var(--spacing-02);
+    }
+}
+
+.time-selector-functions {
+    flex: 1 1 100%;
+    justify-content: flex-end;
+    button {
+        width: 100%;
+    }
+}
