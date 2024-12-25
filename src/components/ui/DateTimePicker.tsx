@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useState } from "react";
 import Style from "./DateTimePicker.module.scss";
 import { Dropdown, DropdownDivider, DropdownItem } from "./Dropdown";
-import { DateTime, DateTimeUnit, MonthNumbers } from "luxon";
+import { DateTime, MonthNumbers } from "luxon";
 import { FaAnglesRight, FaAngleRight, FaAnglesLeft, FaAngleLeft } from "react-icons/fa6";
-import Button, { EButtonFace, EButtonSize } from "./Button";
-import clone from "just-clone"
+import Button, { EButtonFace } from "./Button";
 
 import { FaAngleUp, FaAngleDown } from "react-icons/fa6";
 
@@ -20,6 +19,12 @@ export interface IDateTimePickerProps {
 
     /** Set this flag to span full width */
     spanFullWidth?: boolean
+
+    /** The DateTime value set currently set */
+    value?: KanbanDateTime,
+
+    /** This method will be called every time the this component wants the dateTime value to change, must update the value using this callback  */
+    onChange?: (newDateTime: KanbanDateTime) => void
 }
 
 function DateTimePlaceholder({date, time}: {date: string, time?: string}) {
@@ -31,7 +36,7 @@ function DateTimePlaceholder({date, time}: {date: string, time?: string}) {
     )
 }
 
-class KanbanDateTime {
+export class KanbanDateTime {
 
     private _day:    number;
     private _month:  number;
@@ -303,7 +308,7 @@ interface IDateTimePickerContext {
 }
 const DateTimePickerContext = createContext<IDateTimePickerContext | undefined>(undefined);
 
-export default function DateTimePicker(props: IDateTimePickerProps) {
+export default function DateTimePicker({id, selectTime, spanFullWidth, value, onChange}: IDateTimePickerProps) {
     
     const [dateTime, setDateTime] = useState(new KanbanDateTime());
     const [displayDateTime, setDisplayDateTime] = useState(DateTime.now());
@@ -332,48 +337,65 @@ export default function DateTimePicker(props: IDateTimePickerProps) {
         return (displayDateTime.year < MIN_DISPLAY_DATE_TIME_YEAR && displayDateTime.month === 1)
     }
 
+    function getInternalDateTime(): KanbanDateTime {
+        return value || dateTime;
+    }
+
+    function handleDateTimeChange(returnNewDateTimeCallback: (oldDateTime: KanbanDateTime) => KanbanDateTime) {
+        const internalValue = getInternalDateTime();
+        
+        // Set the internal state if it is not driven from an externally set prop
+        if(!value) {
+            setDateTime(returnNewDateTimeCallback)
+        }
+
+        // Call the onChange callback if required
+        if(onChange) {
+            const newDateTime = returnNewDateTimeCallback(internalValue);
+            onChange(newDateTime);
+        }
+    }
+
     function handleHourIncrease() {
-        setDateTime((prevState) => prevState.clone().setHour((currentHour: number) => (currentHour + 1) % 13));
+        handleDateTimeChange((oldDateTime: KanbanDateTime) => oldDateTime.clone().setHour((currentHour: number) => (currentHour + 1) % 13));
     }
 
     function handleHourDecrease() {
-        setDateTime((prevState) => prevState.clone().setHour((currentHour: number) => Math.max((currentHour - 1) % 13, 0)));
+        handleDateTimeChange((oldDateTime: KanbanDateTime) => oldDateTime.clone().setHour((currentHour: number) => Math.max(currentHour - 1, 0) % 13));
     }
 
     function handleMinuteIncrease() {
-        setDateTime((prevState) => prevState.clone().setMinute((currentMinute: number) => (currentMinute + 1) % 60));
+        handleDateTimeChange((oldDateTime: KanbanDateTime) => oldDateTime.clone().setMinute((currentMinute: number) => (currentMinute + 1) % 60));
     }
 
     function handleMinuteDecrease() {
-        setDateTime((prevState) => prevState.clone().setMinute((currentMinute: number) => Math.max((currentMinute - 1) % 60, 0)));
+        handleDateTimeChange((oldDateTime: KanbanDateTime) => oldDateTime.clone().setMinute((currentMinute: number) => Math.max(currentMinute - 1, 0) % 60));
     }
 
     function handleMeridiemChange() {
-        setDateTime((prevState) => {
-            const isAm = prevState.getIsAm();
-            return prevState.clone().setIsAm(!isAm);
-        });
+        handleDateTimeChange((oldDateTime: KanbanDateTime) => oldDateTime.clone().setIsAm(!oldDateTime.getIsAm()));
     }
 
     function handleSelectToday() {
         const dt = DateTime.now();
-        const isAm = dt.hour < 12
-        setDateTime(new KanbanDateTime(dt.day, dt.month, dt.year, isAm ? dt.hour : dt.hour - 12, dt.minute, isAm))
+        const isAm = dt.hour < 12;
+        handleDateTimeChange(() => new KanbanDateTime(dt.day, dt.month, dt.year, isAm ? dt.hour : dt.hour - 12, dt.minute, isAm));
     }
 
     function handleClearDate() {
-        setDateTime(new KanbanDateTime())
+        handleDateTimeChange(() => new KanbanDateTime());
     }
     
     function getSelectedDate(): {year: number, month: number, date: number} | null {
-        if(dateTime.getYear() && dateTime.getMonth() && dateTime.getDay()) {
-            return { year: dateTime.getYear(), month: dateTime.getMonth(), date: dateTime.getDay() };
+        const internalDate = getInternalDateTime();
+        if(internalDate.getYear() && internalDate.getMonth() && internalDate.getDay()) {
+            return { year: internalDate.getYear(), month: internalDate.getMonth(), date: internalDate.getDay() };
         }
         else return null;
     }
 
     function setSelectedDate(year: number, month: MonthNumbers, date: number) {
-        setDateTime((prevState) => prevState.clone().setDay(date).setMonth(month).setYear(year));
+        handleDateTimeChange((oldDateTime: KanbanDateTime) => oldDateTime.clone().setDay(date).setMonth(month).setYear(year));
     }
 
     function getDisplayDate(): {year: number, month: number} {
@@ -381,11 +403,12 @@ export default function DateTimePicker(props: IDateTimePickerProps) {
     }
 
     function getDateTimePickerId(): string {
-        return props.id;
+        return id;
     }
 
+    const dropdownPlaceholder = (!!value) ? value.serialize(selectTime || false) : dateTime.serialize(selectTime || false)
     return (
-        <Dropdown placeholder={dateTime.serialize(props.selectTime || false)} id={props.id} spanFullWidth={props.spanFullWidth} canContentSpanFullWidth={false}>
+        <Dropdown placeholder={dropdownPlaceholder} id={id} spanFullWidth={spanFullWidth} canContentSpanFullWidth={false}>
             <DateTimePickerContext.Provider value={{setSelectedDate, getSelectedDate, getDisplayDate, getDateTimePickerId}}>
                 <DropdownItem id="month-selector" className={Style['month-year-selector']} selectable={false}>
                     <span className={Style["button-rack"]}>
@@ -411,25 +434,25 @@ export default function DateTimePicker(props: IDateTimePickerProps) {
                         <span className={`${Style['color-danger']} ${Style['day-box']}`}>Sat</span>
                         <span className={`${Style['color-danger']} ${Style['day-box']}`}>Sun</span>
                     </span>
-                    {[1,2,3,4,5,6].map((weekNumber: number) => <WeekEntry weekNumber={weekNumber} key={`${weekNumber} ${props.id} Week Entry`} />)}
+                    {[1,2,3,4,5,6].map((weekNumber: number) => <WeekEntry weekNumber={weekNumber} key={`${weekNumber} ${id} Week Entry`} />)}
                 </DropdownItem>
                 <DropdownDivider />
                 <DropdownItem id="time-and-functions-selector" className={`${Style["row"]} ${Style["spacing-02"]}`} selectable={false}>
-                    {props.selectTime ? <div id="time-selector" className={`${Style["row"]} ${Style["center-align"]}`}>
+                    {selectTime ? <div id="time-selector" className={`${Style["row"]} ${Style["center-align"]}`}>
                         <div className={`${Style["hour-selector"]} ${Style["column"]}`}>
                             <Button face={EButtonFace.none} onClick={handleHourIncrease}><FaAngleUp /></Button>
-                            {dateTime.getHour().toString().padStart(2,'0')}
+                            {getInternalDateTime().getHour().toString().padStart(2,'0')}
                             <Button face={EButtonFace.none} onClick={handleHourDecrease}><FaAngleDown /></Button>
                         </div>
                         <span className={`${Style["hour-minute-separator"]}`}>:</span>
                         <div className={`${Style["minute-selector"]} ${Style["column"]}`}>
                             <Button face={EButtonFace.none} onClick={handleMinuteIncrease}><FaAngleUp /></Button>
-                            {dateTime.getMinute().toString().padStart(2,'0')}
+                            {getInternalDateTime().getMinute().toString().padStart(2,'0')}
                             <Button face={EButtonFace.none} onClick={handleMinuteDecrease}><FaAngleDown /></Button>
                         </div>
                         <div className={`${Style["am-pm-selector"]} ${Style["column"]}`}>
                             <Button face={EButtonFace.none} onClick={handleMeridiemChange}><FaAngleUp /></Button>
-                            {dateTime.getIsAm() ? <span className={`${Style["am-pm-text"]}`}>AM</span> : <span className={`${Style["am-pm-text"]}`}>PM</span>}
+                            {getInternalDateTime().getIsAm() ? <span className={`${Style["am-pm-text"]}`}>AM</span> : <span className={`${Style["am-pm-text"]}`}>PM</span>}
                             <Button face={EButtonFace.none} onClick={handleMeridiemChange}><FaAngleDown /></Button>
                         </div>
                     </div> : undefined}
