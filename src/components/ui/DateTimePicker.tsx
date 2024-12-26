@@ -25,6 +25,9 @@ export interface IDateTimePickerProps {
 
     /** This method will be called every time the this component wants the dateTime value to change, must update the value using this callback  */
     onChange?: (newDateTime: KanbanDateTime) => void
+
+    /** Set This prop to disable letting the user change the value */
+    disabled?: boolean
 }
 
 function DateTimePlaceholder({date, time}: {date: string, time?: string}) {
@@ -308,7 +311,7 @@ interface IDateTimePickerContext {
 }
 const DateTimePickerContext = createContext<IDateTimePickerContext | undefined>(undefined);
 
-export default function DateTimePicker({id, selectTime, spanFullWidth, value, onChange}: IDateTimePickerProps) {
+export default function DateTimePicker({id, selectTime, spanFullWidth, value, onChange, disabled}: IDateTimePickerProps) {
     
     const [dateTime, setDateTime] = useState(new KanbanDateTime());
     const [displayDateTime, setDisplayDateTime] = useState(DateTime.now());
@@ -408,7 +411,7 @@ export default function DateTimePicker({id, selectTime, spanFullWidth, value, on
 
     const dropdownPlaceholder = (!!value) ? value.serialize(selectTime || false) : dateTime.serialize(selectTime || false)
     return (
-        <Dropdown placeholder={dropdownPlaceholder} id={id} spanFullWidth={spanFullWidth} canContentSpanFullWidth={false}>
+        <Dropdown placeholder={dropdownPlaceholder} id={id} spanFullWidth={spanFullWidth} canContentSpanFullWidth={false} disabled={disabled}>
             <DateTimePickerContext.Provider value={{setSelectedDate, getSelectedDate, getDisplayDate, getDateTimePickerId}}>
                 <DropdownItem id="month-selector" className={Style['month-year-selector']} selectable={false}>
                     <span className={Style["button-rack"]}>
