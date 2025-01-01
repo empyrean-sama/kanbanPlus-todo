@@ -1,7 +1,7 @@
 import React, { createContext, ReactNode, useState } from 'react';
 import IProject from '../../interface/IProject';
 import { getCardsAPIVersion } from '../../utilities/cardsAPIUtils';
-import clone from 'just-clone';
+import { cloneDeep } from 'lodash';
 import IBoard from '../../interface/IBoard';
 import ICard, { getDefaultCardProperties, ICardProperties } from '../../interface/ICard';
 import { v4 as uuidV4 } from 'uuid'
@@ -122,7 +122,7 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
         return {
             projectName,
             cardsAPIVersion: getCardsAPIVersion(),
-            boards: clone(project.boards)
+            boards: cloneDeep(project.boards)
         }
     }
 
@@ -134,7 +134,7 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
         const foundBoardWithSameId: boolean = !!(getAllBoardIDsInProject().find((value) => value === boardName));
         if(!foundBoardWithSameId) {
             setProject((prevState) => {
-                const newState: IProject = clone(prevState);
+                const newState: IProject = cloneDeep(prevState);
                 newState.boards.push({
                     name: boardName,
                     cards: []
@@ -150,7 +150,7 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
         const foundBoardWithSameId = project.boards.find((board: IBoard) => board.name === newId)
         if(!foundBoardWithSameId) {
             setProject((prevState) => {
-                const newState = clone(prevState);
+                const newState = cloneDeep(prevState);
                 newState.boards = newState.boards.map((board: IBoard) => {
                     if(board.name === id) {
                         board.name = newId;
@@ -170,7 +170,7 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
 
     function clearBoards(): void {
         setProject((prevState) => {
-            const newState = clone(prevState);
+            const newState = cloneDeep(prevState);
             newState.boards = [];
             return newState;
         })
@@ -178,7 +178,7 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
 
     function deleteBoard(boardId: string): void {
         setProject((prevState) => {
-            const newState = clone(prevState);
+            const newState = cloneDeep(prevState);
             newState.boards.filter((board: IBoard) => board.name !== boardId);
             return newState;
         });
@@ -210,7 +210,7 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
             ...properties
         }
         setProject((prevState) => {
-            const newState = clone(prevState);
+            const newState = cloneDeep(prevState);
             const board = newState.boards.find((board: IBoard) => board.name === boardName) as IBoard;
             board.cards.push(card);
             return newState;
@@ -220,7 +220,7 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
 
     function moveCard(uuid: string, newBoardId: string): void {
         setProject((prevState) => {
-            const newState = clone(prevState);
+            const newState = cloneDeep(prevState);
             let card: ICard | null = null;
             for(let i=0; i< newState.boards.length; i++) {
                 let cardIndex = newState.boards[i].cards.findIndex((card) => card.uuid === uuid);
@@ -247,7 +247,7 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
 
     function setCards(boardName: string, cards: Array<ICard>): void {
         setProject((prevState) => {
-            const newState = clone(prevState);
+            const newState = cloneDeep(prevState);
             const board = newState.boards.find((board) => board.name === boardName);
             if(!board) {
                 throw new Error('Did not find a board with the name ' + boardName + ' while calling the function setCards');
@@ -259,7 +259,7 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
 
     function modifyCard(uuid: string, cardData: ICardProperties, boardNames?: Array<string>) {
         setProject((prevState) => {
-            const newState = clone(prevState);
+            const newState = cloneDeep(prevState);
             for(let i=0; i < newState.boards.length; i++) {
                 for(let j=0; j < newState.boards[i].cards.length; j++) {
                     if(newState.boards[i].cards[j].uuid === uuid) {

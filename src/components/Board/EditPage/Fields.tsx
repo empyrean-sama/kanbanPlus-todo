@@ -13,6 +13,7 @@ import { editPageContext, IEditPageContext } from "./EditPage";
 import { ECardType } from "../../../Enum/ECardType";
 import { IProjectAPI, projectAPIContext } from "../../CardsAPI/ProjectAPI";
 import { boardAPIContext, IBoardAPI } from "../../CardsAPI/BoardAPI";
+import { KanbanDateTime } from "../../ui/DateTimePicker";
 
 export default function Fields() {
 
@@ -45,6 +46,12 @@ export default function Fields() {
         });
     }
 
+    function handleDueDateSelected(newDateTime: KanbanDateTime): void {
+        editPageAPI.setProperties((editCard) => {
+            editCard.dueDate = newDateTime;
+        });
+    }
+
     return (
         <section className={Style['field-section']} key={'field-section'}>
             <LabeledGrid>
@@ -59,8 +66,8 @@ export default function Fields() {
                 <LabeledNumberInput id="story points" value={editCard.storyPoints.toString()} onChange={handleStoryPointsChange} />
             </LabeledGrid>
             <LabeledGrid>
-                <LabeledDateTimePicker id="edit-modify-page-filed-date" selectTime={true} label="filed date" disabled  />
-                <LabeledDateTimePicker id="edit-modify-page-due-date" selectTime={true} label="due date" />
+                <LabeledDateTimePicker id="edit-modify-page-filed-date" selectTime={true} label="filed date" value={editCard.createdDate} disabled  />
+                <LabeledDateTimePicker id="edit-modify-page-due-date" selectTime={true} label="due date" value={editCard.dueDate} onChange={handleDueDateSelected} />
             </LabeledGrid>
         </section>
     );

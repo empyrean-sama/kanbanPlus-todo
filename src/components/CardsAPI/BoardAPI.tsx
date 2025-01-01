@@ -1,7 +1,6 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 import ICard, { ICardProperties } from "../../interface/ICard";
 import { IProjectAPI, projectAPIContext } from "./ProjectAPI";
-import clone from "just-clone";
 
 export interface IBoardAPI {
 

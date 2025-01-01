@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import Style from './EditPage.module.scss';
-import clone from 'just-clone';
+import {cloneDeep} from 'lodash';
 
 import Nav from "./Nav";
 import ICard, { ICardProperties } from "../../../interface/ICard";
@@ -75,7 +75,7 @@ export default function EditCard() {
     }
 
     function setProperties(callback: (properties: IEditCardProperties) => void): void {
-        const clonedCardProperties = clone(cardProperties);
+        const clonedCardProperties = cloneDeep(cardProperties);
         callback(clonedCardProperties);
         setCardProperties(clonedCardProperties);
         setSaveEnabled(true);
