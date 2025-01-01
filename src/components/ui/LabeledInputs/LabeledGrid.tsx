@@ -5,7 +5,7 @@ export interface ILabeledGridProps extends React.HTMLProps<HTMLDivElement> {
 
 }
 
-export default function({children, ...htmlAttributes}: React.PropsWithChildren<ILabeledGridProps>) {
+export default function LabeledGrid({children, ...htmlAttributes}: React.PropsWithChildren<ILabeledGridProps>) {
     return(
         <div className={`${Style['labeled-grid']}`} {...htmlAttributes}>
             {children}

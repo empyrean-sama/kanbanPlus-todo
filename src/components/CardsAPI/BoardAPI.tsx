@@ -1,109 +1,99 @@
-import React, { createContext, ReactNode, useState } from "react";
+import React, { createContext, ReactNode, useContext, useState } from "react";
+import ICard, { ICardProperties } from "../../interface/ICard";
+import { IProjectAPI, projectAPIContext } from "./ProjectAPI";
+import clone from "just-clone";
 
 export interface IBoardAPI {
-    /**
-     * Try to add a new empty board to the project
-     * @param boardName: A project wide unique board name, can contain most types of characters, cannot start or end with a ' ' though
-     * @returns true if the board was successfully created
-     */
-    addNewBoard(boardName: string): boolean,
 
     /**
-     * Get all the board Id's available in this project
-     * @returns an array containing all the board Id's in this project
+     * Sets the current board in context
+     * ! Will cause all the cards on the board to refresh, expensive performance wise 
+     * @param boardName: the board name inside the project to switch to
+     * @throws an error if the boardName is not available in the project
      */
-    getBoardIds(): Array<string>,
+    setCurrentWorkingBoard(boardName: string): void,
 
     /**
-     * Clear all the boards in this project
-     * ? useful in situations like loading in a new project where you quickly need to clear out all the boards and add new ones in
+     * Gets the current working board
+     * @returns the current working board
      */
-    clearBoards(): void,
+    getCurrentWorkingBoard(): string,
 
     /**
-     * Delete a board
-     * @param id of the board to be deleted
+     * Get the id's of all the cards on the board
+     * @returns an array of all the card id's on this board
      */
-    deleteBoard(id: string): void
+    getCardIds(): Array<string>,
 
     /**
-     * Register a function to run after a board is deleted
-     * @param: callback to be called once a board was deleted
+     * Get all cards on the board
+     * @returns an array containing all the cards
      */
-    onDeleteBoard(callback: (boardIdDeleted: string) => void): void
+    getCards(): Array<ICard>,
 
     /**
-     * Modify an existing board id to a new id
-     * @param id The board id to replace
-     * @param newId The new board id after replacement
-     * @returns true if successful, failure may mean that a board with the replacement id already exists 
+     * Create and add a new card onto the current board
+     * @param cardProperties: optional properties can be set if the card is to be initialized while creation
+     * @returns the uuid of the newly created card
      */
-    modifyBoardId(id: string, newId: string): boolean,
+    addCard(cardProperties?: ICardProperties): string,
 
     /**
-     * Register a function to run when a board id is replaced
-     * @param callback: the function called when a board id is modified
+     * 
+     * @param callback 
      */
-    onModifyBoardId(callback: (oldId: string, newId: string) => void): void 
+    setCards(callback: (prevState: Array<ICard>) => Array<ICard>): void
+
+    /**
+     * Modify the properties of a card on the board
+     * ? This method only checks the current board, the projectAPI might provide an API for project wide work
+     * @param uuid: The uuid of the card whose properties need to be updated
+     * @param updatePropertiesCallback: The callback provides the old ICardProperties object corresponding to the given uuid, MUST RETURN A NEW OBJECT with the correct properties as the output
+     * @throws an error if a card with the given uuid is not found on the board
+     */
+    modifyCard(uuid: string, newPropertiesCallback: (cardProperties: ICardProperties) => ICardProperties): void,
 }
 export const boardAPIContext = createContext<IBoardAPI | undefined>(undefined);
 
 export default function BoardAPI({children}: {children: ReactNode}) {
-    const [boardIds, setBoardIds] = useState<Array<string>>([]);
-    const onDeleteBoardCallbacks:  Array<(boardIdDeleted: string) => void> = [];
-    const onReplaceBoardCallbacks: Array<(oldBoardId: string, newBoardId: string) => void> = [];
+    const [currentBoardId, setCurrentBoardId] = useState('');    
+    const projectAPI = useContext(projectAPIContext) as IProjectAPI;
 
-    function addNewBoard(boardName: string): boolean {
-        const foundBoardWithSameId: boolean = !!(boardIds.find((value) => value === boardName));
-        if(!foundBoardWithSameId) {
-            setBoardIds((prevState) => [...prevState, boardName]);
-            return true;
+    function setCurrentWorkingBoard(boardName: string): void {
+        setCurrentBoardId(boardName);
+    }
+
+    function getCurrentWorkingBoard(): string {
+        return currentBoardId;
+    }
+
+    function getCardIds(): Array<string> {
+        return projectAPI.getCards(currentBoardId).map((card) => card.uuid);
+    }
+
+    function getCards(): Array<ICard> {
+        return projectAPI.getCards(currentBoardId);
+    }
+
+    function addCard(cardProperties?: ICardProperties): string {
+        return projectAPI.addCard(currentBoardId, cardProperties);
+    }
+
+    function modifyCard(uuid: string, updatePropertiesCallback: (cardProperties: ICardProperties) => void | ICardProperties): void {
+        const cardToModify: ICard | undefined = projectAPI.getCards(currentBoardId).find((card: ICard) => card.uuid === uuid);
+        if(!cardToModify) {
+            throw new Error(`Unable to find a card with the given uuid (${uuid}) on the board '${currentBoardId}'`);
         }
-        return false;
+        const ret = updatePropertiesCallback(cardToModify);
+        projectAPI.modifyCard(uuid, ret || cardToModify, [currentBoardId]);
     }
 
-    function getBoardIds() : Array<string> {
-        return boardIds;
-    }
-
-    function clearBoards(): void {
-        setBoardIds([]);
-    }
-
-    function onDeleteBoard(callback: (boardIdDeleted: string) => void) {
-        onDeleteBoardCallbacks.push(callback);
-    }
-
-    function deleteBoard(boardId: string): void {
-        setBoardIds((prevState) => prevState.filter((id) => id !== boardId));
-        onDeleteBoardCallbacks.forEach((callback) => callback(boardId));
-    }
-
-    function modifyBoardId(id: string, newId: string): boolean {
-        const foundBoardWithSameId = boardIds.find((boardId: string) => boardId === newId)
-        if(!foundBoardWithSameId) {
-            setBoardIds((prevState) => [...prevState.map((i) => (i === id? newId: i))]);
-            onReplaceBoardCallbacks.forEach((callback) => callback(id, newId));
-        }
-        return !foundBoardWithSameId;
-    }
-
-    function onModifyBoardId(callback: (id: string, newId: string) => void) {
-        onReplaceBoardCallbacks.push(callback);
+    function setCards(callback: (prevState: Array<ICard>) => Array<ICard>): void {
+        projectAPI.setCards(currentBoardId, callback(getCards()));
     }
 
     return(
-        <boardAPIContext.Provider value={
-            {
-                addNewBoard, 
-                getBoardIds, 
-                clearBoards, 
-                deleteBoard, 
-                onDeleteBoard, 
-                modifyBoardId, 
-                onModifyBoardId
-            }
-        }>
+        <boardAPIContext.Provider value={{setCurrentWorkingBoard, getCurrentWorkingBoard, getCardIds, getCards, addCard, setCards, modifyCard}}>
             {children}
         </boardAPIContext.Provider>
     );

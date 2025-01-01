@@ -8,11 +8,11 @@ import { FaTrashCan } from "react-icons/fa6";
 import { FaCircleCheck } from "react-icons/fa6";
 
 import Style from './BoardDropdownItem.module.scss';
-import { boardAPIContext, IBoardAPI } from '../CardsAPI/BoardAPI';
+import { IProjectAPI, projectAPIContext } from '../CardsAPI/ProjectAPI';
 
 export default function BoardDropdownItem({id}: {id: string}) {
 
-    const { modifyBoardId, deleteBoard} = useContext(boardAPIContext) as IBoardAPI;
+    const { modifyBoardId, deleteBoard} = useContext(projectAPIContext) as IProjectAPI;
     const [isEditable, setIsEditable] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [inputInError, setInputInError] = useState(false);
@@ -71,7 +71,7 @@ export default function BoardDropdownItem({id}: {id: string}) {
         editButton = <button data-test="edit-button" onClick={onEditClicked} className='mr-2'><FaPenToSquare size={16} className={`${Style['icon']} ${Style['edit-icon']}`}/></button>
         actionButton = <button data-test="action-button" onClick={onDeleteClicked}><FaTrashCan size={16} className={`${Style['icon']} ${Style['delete-icon']}`}/></button>
     }
-
+    
     return (
         <>
             <DropdownItem id={id} className={`${Style['space-out']}`}>

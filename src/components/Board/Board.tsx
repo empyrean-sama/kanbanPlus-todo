@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState } from 'react';
-import { cardAPIContext, ICardAPI } from '../CardsAPI/CardAPI';
 import ECardState from '../../Enum/ECardState';
 
 import EditPage from './EditPage/EditPage';
 import ColumnPage from './ColumnPage/ColumnPage';
+import { boardAPIContext, IBoardAPI } from '../CardsAPI/BoardAPI';
+import { ISelectSetAPI, selectSetAPIContext } from '../CardsAPI/SelectSetAPI';
+import CreateCard from './CreateCard';
 
 export interface IBoardComponentContext {
     /**
@@ -29,12 +31,13 @@ export const boardComponentContext = createContext<IBoardComponentContext | unde
 export default function Board() {
 
     const [ showEditPage, setShowEditPage ] = useState(false);
-    const { setCardState, setCards, getCardsSelected } = useContext(cardAPIContext) as ICardAPI;
-    
+    const boardAPI = useContext(boardAPIContext) as IBoardAPI;
+    const selectSet = useContext(selectSetAPIContext) as ISelectSetAPI;
+
     function moveCard(id: string, state: ECardState, dropY: number): void {
         const columnCards: HTMLDivElement[] = [...(document.getElementById(`column-${state}`) as HTMLDivElement).children[1].children] as HTMLDivElement[];
         if(columnCards.length === 0) {
-            return setCardState(id, state);
+            return boardAPI.modifyCard(id, (cardProperties) => {return {...cardProperties, state}});
         }
 
         const columnCardCenters = columnCards.map((card, index) => {
@@ -55,7 +58,7 @@ export default function Board() {
         if(idUnderConsideration !== id)
         {
             //! Move only if absolutely necessary, recompute will constitute buggy behavior
-            setCards((prevState) => {
+            boardAPI.setCards((prevState) => {
                 // Start calculating the new state
                 let newState = [...prevState];
     
@@ -96,8 +99,9 @@ export default function Board() {
 
     return (
         <boardComponentContext.Provider value={{moveCard, openEditPage, closeEditPage}}>
-            {(showEditPage && getCardsSelected().length > 0) ? <EditPage /> : undefined }
+            {(showEditPage && selectSet.getCardIds().length > 0) ? <EditPage /> : undefined }
             <ColumnPage />
+            <CreateCard />
         </boardComponentContext.Provider>
     );
 }

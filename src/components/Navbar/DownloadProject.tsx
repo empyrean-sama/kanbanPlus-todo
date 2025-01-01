@@ -4,27 +4,26 @@ import Button from '../ui/Button';
 import Modal, {ModalHeader, ModalBody, ModalFooter} from '../ui/Modal';
 import Checkbox from '../ui/Checkbox';
 
-import { getCardsAPIVersion } from '../../utilities/cardsAPIUtils';
 import Settings from '../../settings.json';
 import download from '../../utilities/download';
 import { FaDownload } from "react-icons/fa6";
 import { IMessageService, messageServiceContext, EMessageType } from '../Message/MessageService';
 
-import IProject from '../../interface/IProject';
-import IBoard from '../../interface/IBoard';
 import { boardAPIContext, IBoardAPI } from '../CardsAPI/BoardAPI';
+import { IProjectAPI, projectAPIContext } from '../CardsAPI/ProjectAPI';
 
 export default function DownloadProject() {
     
-    const { getBoardIds} = useContext(boardAPIContext) as IBoardAPI
+    const projectAPI = useContext(projectAPIContext) as IProjectAPI;
+    const boardAPI = useContext(boardAPIContext) as IBoardAPI;
     const { showMessage } = useContext(messageServiceContext) as IMessageService;
     
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
-    const [selectedBoards, setSelectedBoards] = useState<Array<string>>([]);
+    const [selectedBoards, setSelectedBoards] = useState<Array<string>>(projectAPI.getAllBoardIDsInProject());
     
     function onClick() {
-        const allBoards = getBoardIds();
+        const allBoards = projectAPI.getAllBoardIDsInProject();
         if(allBoards.length > 0) {
             setIsOpen(true);
         }
@@ -34,18 +33,8 @@ export default function DownloadProject() {
     }
 
     function onSuccess() {
-        // Create a project file and populate it with all boards
-        const projectFile: IProject = {
-            projectName: inputValue,
-            cardsAPIVersion: getCardsAPIVersion(),
-            boards: []
-        };
-        selectedBoards.forEach((boardId) => {
-            const board: IBoard = {
-                name: boardId
-            };
-            projectFile.boards.push(board);
-        });
+        const projectFile = projectAPI.serializeProject(inputValue);
+        projectFile.boards = projectFile.boards.filter((boardName) => !selectedBoards.find((selectedBoardName) => selectedBoardName === boardName.name))
 
         download(`${inputValue}.json`, JSON.stringify(projectFile));
         setIsOpen(false);
@@ -77,7 +66,7 @@ export default function DownloadProject() {
 
                     <h2>Include Boards</h2>
                     <div className='checkboxes'>
-                        {getBoardIds().map((boardId) => <Checkbox key={boardId} onCheckChanged={(checked) => handleBoardOnCheckChanged(checked, boardId)}> {boardId} </Checkbox>)}
+                        {projectAPI.getAllBoardIDsInProject().map((boardId) => <Checkbox key={boardId} onCheckChanged={(checked) => handleBoardOnCheckChanged(checked, boardId)}> {boardId} </Checkbox>)}
                     </div>
 
                     <h3>Details</h3>

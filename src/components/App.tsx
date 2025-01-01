@@ -4,23 +4,24 @@ import MessageService from './Message/MessageService';
 
 import Navbar from './Navbar/Navbar';
 import Board from './Board/Board';
-import CardAPI from './CardsAPI/CardAPI';
-import BoardAPI from './CardsAPI/BoardAPI';
+
 import ProjectAPI from './CardsAPI/ProjectAPI';
+import BoardAPI from './CardsAPI/BoardAPI';
+import SelectSetAPI from './CardsAPI/SelectSetAPI';
 
 export default function App() {
     return (
         <MessageService>
-            <CardAPI>
+            <ProjectAPI>
                 <BoardAPI>
-                    <ProjectAPI>
+                    <SelectSetAPI>
                         <div className={`${Style['full-height-flex-column']}`}>
                             <Navbar />
                             <Board />
                         </div>
-                    </ProjectAPI>
+                    </SelectSetAPI>
                 </BoardAPI>
-            </CardAPI>
+            </ProjectAPI>
         </MessageService>
     );
 }

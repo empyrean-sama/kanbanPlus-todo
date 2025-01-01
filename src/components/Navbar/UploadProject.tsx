@@ -1,4 +1,4 @@
-import React,  { ChangeEvent, useContext, useState } from 'react';
+import React,  { useContext, useState } from 'react';
 import Button, { EButtonFace } from '../ui/Button';
 import Modal,  { ModalHeader, ModalBody, ModalFooter } from '../ui/Modal';
 import { navbarContext, INavbarContext } from './Navbar';
@@ -8,15 +8,16 @@ import { EMessageType, IMessageService, messageServiceContext } from '../Message
 
 import IProject from '../../interface/IProject';
 import { boardAPIContext, IBoardAPI } from '../CardsAPI/BoardAPI';
+import { IProjectAPI, projectAPIContext } from '../CardsAPI/ProjectAPI';
 
 export default function UploadProject() {
     const { showMessage } = useContext(messageServiceContext) as IMessageService;
-    const { getBoardIds, clearBoards, addNewBoard } = useContext(boardAPIContext) as IBoardAPI;
+    const { getAllBoardIDsInProject, clearBoards, addNewBoard } = useContext(projectAPIContext) as IProjectAPI;
     const { clearDropdownActiveChild } = useContext(navbarContext) as INavbarContext;
     const [ modalOpen, setModalOpen ] = useState(false);
 
     function onClick() {
-        if(getBoardIds().length > 0) {
+        if(getAllBoardIDsInProject().length > 0) {
             setModalOpen(true);
         }
         else {

@@ -4,13 +4,13 @@ import Button, { EButtonFace } from '../../ui/Button';
 
 import { FaLink, FaPlay, FaStop, FaPenToSquare, FaTrashCan, FaBug, FaListCheck  } from "react-icons/fa6";
 import { ECardType } from '../../../Enum/ECardType';
-import { cardAPIContext, ICardAPI } from '../../CardsAPI/CardAPI';
 import { boardComponentContext, IBoardComponentContext } from '../Board';
 import ICard from '../../../interface/ICard';
+import { ISelectSetAPI, selectSetAPIContext } from '../../CardsAPI/SelectSetAPI';
 
 export default function Card(props: ICard) {
 
-    const { addCardToSelectSet } = useContext(cardAPIContext) as ICardAPI;
+    const selectSetAPI = useContext(selectSetAPIContext) as ISelectSetAPI
     const { openEditPage } = useContext(boardComponentContext) as IBoardComponentContext;
 
     function handleDragStart(ev: React.DragEvent<HTMLDivElement>) {
@@ -19,7 +19,7 @@ export default function Card(props: ICard) {
     }
 
     function onEditClicked() {
-        addCardToSelectSet(props);
+        selectSetAPI.add(props);
         openEditPage();
     }
 

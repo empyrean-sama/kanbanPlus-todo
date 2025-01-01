@@ -48,6 +48,12 @@ export class KanbanDateTime {
     private _minute: number;
     private _isAm:   boolean;
 
+    public static now(): KanbanDateTime {
+        const dt = DateTime.now();
+        const isAm = dt.hour < 12;
+        return new KanbanDateTime(dt.day, dt.month, dt.year, isAm ? dt.hour : dt.hour - 12, dt.minute, isAm);
+    }
+
     /**
      * Utility method useful while trying to set state
      * @returns a new KanbanDateTime object with identical fields to this object
@@ -74,6 +80,67 @@ export class KanbanDateTime {
         this._hour = hour || 0;
         this._minute = minute || 0;
         this._isAm = (isAm === null || isAm === undefined)? true : isAm;
+    }
+
+    /**
+     * Converts this object into a string to be stored on the file system 
+     * @returns a string which can be written to the file system
+     */
+    public toString(): string {
+        return `${this._day};${this._month};${this._year};${this._hour};${this._minute};${this._isAm}`;
+    }
+
+    /**
+     * Converts a relevant string in memory into a usable KanbanDateTime object
+     * @param dateTime: the string in memory
+     * @throws an error if the string is not serializable
+     */
+    public fromString(dateTime: string): void {
+        const fields = dateTime.split(';');
+
+        //throw error early after preliminary check
+        if(fields.length !== 6) {
+            throw new Error(`Error trying to read a KanbanDateTime from the string ${dateTime}, expected 6 fields. Got only ${fields.length}`);
+        }
+
+        //setup the day, month and year fields
+        this._day = parseInt(fields[0]);
+        this._month = parseInt(fields[1]);
+        this._year = parseInt(fields[2]);
+        
+        //setup hour field
+        this._hour = parseInt(fields[3]);
+        if(!this._hour || this._hour > 12 || this._hour < 0) {
+            throw new Error(`Error trying to read a KanbanDateTime from the string ${dateTime}, hour cannot be ${this._hour}`);
+        } 
+
+        //setup _minute
+        this._minute = parseInt(fields[4]);
+        if(!this._minute || this._minute < 0 || this._minute > 59) {
+            throw new Error(`Error trying to read a KanbanDateTime from the string ${dateTime}, minute cannot be ${this._minute}`);
+        }
+
+        //setup isAm
+        if(fields[5] === 'true') {
+            this._isAm = true;
+        }
+        else if(fields[5] === 'false') {
+            this._isAm = false;
+        }
+        else {
+            throw new Error(`Error trying to read a KanbanDateTime from the string ${dateTime}, _isAm field cannot be ${this._isAm}`);
+        }
+    }
+
+    /**
+     * A static utility for better syntactical usage of the fromString method
+     * @param dateTime: the string in memory
+     * @returns a new KanbanDateTime object
+     */
+    public static fromString(dateTime: string): KanbanDateTime {
+        const dt = new KanbanDateTime();
+        dt.fromString(dateTime);
+        return dt;
     }
 
     /**
@@ -380,9 +447,7 @@ export default function DateTimePicker({id, selectTime, spanFullWidth, value, on
     }
 
     function handleSelectToday() {
-        const dt = DateTime.now();
-        const isAm = dt.hour < 12;
-        handleDateTimeChange(() => new KanbanDateTime(dt.day, dt.month, dt.year, isAm ? dt.hour : dt.hour - 12, dt.minute, isAm));
+        handleDateTimeChange(() => KanbanDateTime.now());
     }
 
     function handleClearDate() {

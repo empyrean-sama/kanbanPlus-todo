@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
 import Style from './ColumnPage.module.scss'; 
-import { cardAPIContext, ICardAPI } from '../../CardsAPI/CardAPI';
 import ECardState from '../../../Enum/ECardState';
 import Card from './Card';
 import Column from './Column';
+import { boardAPIContext, IBoardAPI } from '../../CardsAPI/BoardAPI';
 
 export default function ColumnPage() {
-    const { getAllCards } = useContext(cardAPIContext) as ICardAPI;
-    const cards = getAllCards();
+    const boardAPI = useContext(boardAPIContext) as IBoardAPI;
+    const cards = boardAPI.getCards();
 
     return (
         <div className={`${Style['column-holder']}`}>

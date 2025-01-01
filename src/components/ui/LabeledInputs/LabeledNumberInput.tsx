@@ -4,14 +4,14 @@ import LabeledInput, { ILabeledInputProps } from "./LabeledInput";
 
 interface ILabeledNumberInputProps extends ILabeledInputProps {
     value?: string,
-    onInput?: FormEventHandler<HTMLInputElement>,
+    onChange?: React.ChangeEventHandler<HTMLInputElement>,
     disabled?: boolean
 }
 
-export default function LabeledNumberInput({id, label, value, onInput, disabled}: ILabeledNumberInputProps): React.ReactNode {
+export default function LabeledNumberInput({id, label, value, onChange, disabled}: ILabeledNumberInputProps): React.ReactNode {
     return(
         <LabeledInput id={id} label={label}>
-            <input id={id} className={`input ${Style['input']}`} type="number" value={value} onInput={onInput} disabled={disabled} />
+            <input id={id} className={`input ${Style['input']}`} type="number" value={value} onChange={onChange} disabled={disabled} />
         </LabeledInput>
     )
 }

@@ -4,17 +4,17 @@ import { DropdownItem, dropdownContext, IDropdownContext } from '../ui/Dropdown'
 
 import Style from './CreateBoard.module.scss';
 import { FaPlus } from 'react-icons/fa6';
-import { boardAPIContext, IBoardAPI } from '../CardsAPI/BoardAPI';
+import { IProjectAPI, projectAPIContext } from '../CardsAPI/ProjectAPI';
 
 export default function CreateNewBoard() {
-    const { addNewBoard } = useContext(boardAPIContext) as IBoardAPI;
+    const projectAPI = useContext(projectAPIContext) as IProjectAPI;
 
     const [inputValue, setInputValue] = useState('');
     const [inputInDanger, setInputInDanger] = useState(false);
 
     function handleAddNewBoard() {
         if(inputValue.trim()) {
-            const success = addNewBoard(inputValue.trim());
+            const success = projectAPI.addNewBoard(inputValue.trim());
             if(!success) {
                 setInputInDanger(true);
             }

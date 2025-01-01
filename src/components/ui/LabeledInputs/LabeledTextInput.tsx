@@ -4,14 +4,14 @@ import LabeledInput, { ILabeledInputProps } from "./LabeledInput";
 
 interface ILabeledTextInputProps extends ILabeledInputProps {
     value?: string,
-    onInput?: FormEventHandler<HTMLInputElement>,
+    onInput?: React.ChangeEventHandler<HTMLInputElement> ,
     disabled?: boolean
 }
 
 export default function LabeledTextInput({id, label, value, onInput, disabled}: ILabeledTextInputProps): React.ReactNode {
     return(
         <LabeledInput id={id} label={label}>
-            <input id={id} className={`input ${Style['input']}`} type="text" value={value} onInput={onInput} disabled={disabled} />
+            <input type="text" value={value} onInput={onInput} disabled={disabled} className="input" />
         </LabeledInput>
     )
 }

@@ -11,14 +11,14 @@ import capitalize from 'just-capitalize';
 import LabeledGrid from '../../ui/LabeledInputs/LabeledGrid';
 
 export default function EditCardNav({ saveEnabled }: {saveEnabled: boolean}): React.ReactNode {
-    const { getEditCard, setEditCard, handleClose, handleSave } = useContext(editPageContext) as IEditPageContext;
+    const { getProperties, setProperties, handleClose, handleSave } = useContext(editPageContext) as IEditPageContext;
     
     return (
-        <header className={`${Style['header']} ${getEditCard().type === ECardType.task ? Style['task-card'] : Style['regression-card']}`}>
+        <header className={`${Style['header']} ${getProperties().type === ECardType.task ? Style['task-card'] : Style['regression-card']}`}>
             <div className={Style['title-rack']}>
                 <input 
                     className={`${Style['input']} input is-size-4`} type="text" 
-                    placeholder="Card Title" value={getEditCard().title} onChange={(ev) => setEditCard((card) => card.title = ev.target.value)} 
+                    placeholder="Card Title" value={getProperties().title} onChange={(ev) => setProperties((card) => card.title = ev.target.value)} 
                 />
             </div>
             <div className={Style['state-rack']}>
@@ -27,12 +27,12 @@ export default function EditCardNav({ saveEnabled }: {saveEnabled: boolean}): Re
                         label="State"
                         id="state-dropdown-editPage" 
                         placeholder='undefined' 
-                        initialActiveId={capitalize(getEditCard().state)} 
-                        onSelect={(selectedId) => setEditCard((card) => card.state = strToECardState(selectedId))}
+                        initialActiveId={capitalize(getProperties().state)} 
+                        onSelect={(selectedId) => setProperties((card) => card.state = strToECardState(selectedId))}
                         spanFullWidth={false}
                     >
                         {
-                            (getEditCard().type === ECardType.regression) ? 
+                            (getProperties().type === ECardType.regression) ? 
                                 <DropdownItem id={capitalize(ECardState.regression)}>Regression</DropdownItem> : 
                                 <DropdownItem id={capitalize(ECardState.todo)}>Todo</DropdownItem>
                         }
