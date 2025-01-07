@@ -1,0 +1,23 @@
+.row-center {
+    display: flex;
+    align-items: center;
+ 
+    column-gap: var(--spacing-01);
+}
+
+.column-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    row-gap: var(--spacing-01);
+}
+
+.display-field-input {
+    max-width: 75px;
+    text-align: center;
+}
+
+.display-field-button {
+    width: 100%;
+}

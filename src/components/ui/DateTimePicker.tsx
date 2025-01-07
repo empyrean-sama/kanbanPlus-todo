@@ -208,7 +208,6 @@ export class KanbanDateTime {
         return this;
     }
 
-
     /**
      * Get the month field
      * @returns the month field

@@ -1,6 +1,7 @@
 import ECardState from '../Enum/ECardState';
 import { ECardType } from '../Enum/ECardType';
 import { KanbanDateTime } from '../components/ui/DateTimePicker';
+import KanbanTime from '../components/ui/class/KanbanTime';
 
 export interface ITimeEntry {
     /** Entry is expected to be something like 12 DEC 2024 8:30am to 12 Dec 2024 9:30am */
@@ -22,8 +23,7 @@ export interface ICardProperties {
     createdDate: KanbanDateTime,
     dueDate: KanbanDateTime,
     storyPoints: number,
-    /** Estimated time is in hours */
-    estimatedTime: number,
+    estimatedTime: KanbanTime,
     timeSpentEntries: Array<ITimeEntry>
 }
 
@@ -38,7 +38,7 @@ export function getDefaultCardProperties(): ICardProperties {
         createdDate: KanbanDateTime.now(),
         dueDate: new KanbanDateTime(),
         storyPoints: 0,
-        estimatedTime: 0,
+        estimatedTime: new KanbanTime(),
         timeSpentEntries: []
     };
 }

@@ -14,6 +14,7 @@ import { ECardType } from "../../../Enum/ECardType";
 import { IProjectAPI, projectAPIContext } from "../../CardsAPI/ProjectAPI";
 import { boardAPIContext, IBoardAPI } from "../../CardsAPI/BoardAPI";
 import { KanbanDateTime } from "../../ui/DateTimePicker";
+import LabeledTimePicker from "../../ui/LabeledInputs/LabeledTimePicker";
 
 export default function Fields() {
 
@@ -68,6 +69,7 @@ export default function Fields() {
             <LabeledGrid>
                 <LabeledDateTimePicker id="edit-modify-page-filed-date" selectTime={true} label="filed date" value={editCard.createdDate} disabled  />
                 <LabeledDateTimePicker id="edit-modify-page-due-date" selectTime={true} label="due date" value={editCard.dueDate} onChange={handleDueDateSelected} />
+                <LabeledTimePicker id="edit-page-estimated-time" label="estimated time" selectDays={true} value={editCard.estimatedTime} onChange={(newTime) => editPageAPI.setProperties((editCard) => editCard.estimatedTime = newTime)} />
             </LabeledGrid>
         </section>
     );
