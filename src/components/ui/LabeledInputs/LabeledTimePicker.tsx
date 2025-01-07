@@ -7,14 +7,15 @@ import KanbanTime from "../class/KanbanTime";
 
 export interface ILabeledTimePickerProps extends ILabeledInputProps {
     selectDays: boolean,
+    disabled?: boolean,
     value?: KanbanTime,
     onChange?: (newTime: KanbanTime) => void
 }
 
-export default function LabeledTimePicker({id, label, selectDays, value, onChange}: ILabeledTimePickerProps) {
+export default function LabeledTimePicker({id, disabled, label, selectDays, value, onChange}: ILabeledTimePickerProps) {
     return (
         <LabeledInput id={id} label={label}>
-            <TimePicker id={id} spanFullWidth selectDays={selectDays} value={value} onChange={onChange}></TimePicker>
+            <TimePicker disabled={disabled} id={id} spanFullWidth selectDays={selectDays} value={value} onChange={onChange}></TimePicker>
         </LabeledInput>
     );
 }

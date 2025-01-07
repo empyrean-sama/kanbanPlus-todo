@@ -2,6 +2,7 @@
     display: grid;
     grid-template-columns: min-content 1fr;
     column-gap: var(--spacing-02);
+    row-gap: var(--spacing-01);
     align-items: center;
 
     text-wrap: nowrap;

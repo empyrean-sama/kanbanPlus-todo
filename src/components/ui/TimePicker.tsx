@@ -13,9 +13,10 @@ export interface ITimePickerProps {
     value?: KanbanTime,
     onChange?: (newKanbanTime: KanbanTime) => void,
     spanFullWidth?: boolean,
+    disabled?: boolean
 }
 
-export default function TimePicker({id, selectDays, value, onChange, spanFullWidth}: ITimePickerProps) {
+export default function TimePicker({id, selectDays, value, onChange, spanFullWidth, disabled}: ITimePickerProps) {
     
     const [time, setTime] = useState(value || new KanbanTime());
     function handleChange(callback: (newTime: KanbanTime) => void) {
@@ -28,7 +29,7 @@ export default function TimePicker({id, selectDays, value, onChange, spanFullWid
     };
 
     return (
-        <Dropdown placeholder={value?.serializeTime(selectDays) || time.serializeTime(selectDays)} id={id} spanFullWidth={spanFullWidth} canContentSpanFullWidth={false}>
+        <Dropdown placeholder={value?.serializeTime(selectDays) || time.serializeTime(selectDays)} id={id} spanFullWidth={spanFullWidth} canContentSpanFullWidth={false} disabled={disabled}>
             <DropdownItem id={`${id}-time-selector-item`} selectable={false}>
                 <div className={Style['row-center']}>
                     { selectDays ? 

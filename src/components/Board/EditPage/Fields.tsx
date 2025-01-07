@@ -56,20 +56,21 @@ export default function Fields() {
     return (
         <section className={Style['field-section']} key={'field-section'}>
             <LabeledGrid>
-                <LabeledTextInput id="uuid" disabled value={editPageAPI.getUUID()} />
-                <LabeledDropdown  id="board" placeholder="undefined, will never be displayed" initialActiveId={boardAPI.getCurrentWorkingBoard()} onSelect={handleBoardSelected}>
+                <LabeledTextInput id="uuid-edit-page" label="uuid" disabled value={editPageAPI.getUUID()} />
+                <LabeledDropdown  id="board-edit-page" label="board" placeholder="undefined, will never be displayed" initialActiveId={boardAPI.getCurrentWorkingBoard()} onSelect={handleBoardSelected}>
                     {projectAPI.getAllBoardIDsInProject().map((boardId) => <DropdownItem id={boardId} key={`${boardId} key in edit-modify page`}>{boardId}</DropdownItem>)}
                 </LabeledDropdown>
-                <LabeledDropdown  id="type" placeholder="undefined, will never be displayed" initialActiveId={capitalize(editCard.type)} onSelect={handleTypeChange}>
+                <LabeledDropdown  id="type-edit-page" label="type" placeholder="undefined, will never be displayed" initialActiveId={capitalize(editCard.type)} onSelect={handleTypeChange}>
                     <DropdownItem id="Task">Task</DropdownItem>
                     <DropdownItem id="Regression">Regression</DropdownItem>
                 </LabeledDropdown>
-                <LabeledNumberInput id="story points" value={editCard.storyPoints.toString()} onChange={handleStoryPointsChange} />
+                <LabeledNumberInput id="story-points-edit-page" label="story points" value={editCard.storyPoints.toString()} onChange={handleStoryPointsChange} />
             </LabeledGrid>
             <LabeledGrid>
-                <LabeledDateTimePicker id="edit-modify-page-filed-date" selectTime={true} label="filed date" value={editCard.createdDate} disabled  />
-                <LabeledDateTimePicker id="edit-modify-page-due-date" selectTime={true} label="due date" value={editCard.dueDate} onChange={handleDueDateSelected} />
-                <LabeledTimePicker id="edit-page-estimated-time" label="estimated time" selectDays={true} value={editCard.estimatedTime} onChange={(newTime) => editPageAPI.setProperties((editCard) => editCard.estimatedTime = newTime)} />
+                <LabeledDateTimePicker id="filed-date-edit-page" selectTime={true} label="filed date" value={editCard.createdDate} disabled  />
+                <LabeledDateTimePicker id="due-date-edit-page" selectTime={true} label="due date" value={editCard.dueDate} onChange={handleDueDateSelected} />
+                <LabeledTimePicker id="estimated-time-edit-page" label="estimated time" selectDays={true} value={editCard.estimatedTime} onChange={(newTime) => editPageAPI.setProperties((editCard) => editCard.estimatedTime = newTime)} />
+                <LabeledTimePicker id="time-elapsed-edit-page" disabled label="elapsed time" selectDays={true} />
             </LabeledGrid>
         </section>
     );
