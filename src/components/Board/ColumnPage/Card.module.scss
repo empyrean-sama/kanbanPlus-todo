@@ -1,6 +1,7 @@
 .card {
     margin-right: var(--spacing-03);
     width: calc(100% - var(--spacing-03));
+    max-width: 370px;
 
     --header-color:  var(--bulma-black)
 }
