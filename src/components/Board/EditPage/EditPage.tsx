@@ -3,9 +3,11 @@ import Style from './EditPage.module.scss';
 import {cloneDeep} from 'lodash';
 
 import Nav from "./Nav";
-import ICard, { ICardProperties } from "../../../interface/ICard";
 import { boardComponentContext, IBoardComponentContext } from "../Board";
 import Fields from "./Fields";
+import Description from "./Description"; 
+
+import ICard, { ICardProperties } from "../../../interface/ICard";
 import { boardAPIContext, IBoardAPI } from "../../CardsAPI/BoardAPI";
 import { ISelectSetAPI, selectSetAPIContext } from "../../CardsAPI/SelectSetAPI";
 import { IProjectAPI, projectAPIContext } from "../../CardsAPI/ProjectAPI";
@@ -41,7 +43,7 @@ export interface IEditPageContext {
 }
 export const editPageContext = createContext<IEditPageContext | undefined>(undefined);
 
-interface IEditCardProperties extends ICardProperties {
+export interface IEditCardProperties extends ICardProperties {
     board: string
 };
 
@@ -86,6 +88,7 @@ export default function EditCard() {
             <div className={Style['fixed-full-page']}>
                 <Nav saveEnabled={saveEnabled} />
                 <Fields key={'fields'} />
+                <Description />
             </div>
         </editPageContext.Provider>
     );

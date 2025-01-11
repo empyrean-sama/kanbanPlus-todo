@@ -1,0 +1,17 @@
+.description-container {
+    margin: 0 var(--spacing-04);
+    width: calc(50% - var(--spacing-04));
+
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--spacing-01);
+
+    h2 {
+        margin-left: var(--spacing-01);
+    }
+
+    textarea {
+        resize: none;
+        height: 300px;
+    }
+}
