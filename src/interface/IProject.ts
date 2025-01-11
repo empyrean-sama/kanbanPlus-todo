@@ -1,7 +1,14 @@
-import IBoard from "./IBoard";
+import IBoard, { IParsedBoard } from "./IBoard";
 
-export default interface IProject {
+interface IAbsoluteProjectProperties {
     projectName: string,
     cardsAPIVersion: string,
+}
+
+export default interface IProject extends IAbsoluteProjectProperties {
     boards: Array<IBoard>
+}
+
+export interface IParsedProject extends IAbsoluteProjectProperties {
+    boards: Array<IParsedBoard>
 }

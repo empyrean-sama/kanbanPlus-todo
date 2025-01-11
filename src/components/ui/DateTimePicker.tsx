@@ -39,6 +39,7 @@ function DateTimePlaceholder({date, time}: {date: string, time?: string}) {
     )
 }
 
+//todo: must design the archietecture such that IParsedDateTime gets automatically updated when changes are made to the KanbanDateTime
 export class KanbanDateTime {
 
     private _day:    number;
@@ -84,6 +85,7 @@ export class KanbanDateTime {
 
     /**
      * Converts this object into a string to be stored on the file system 
+     * ! This method is not used in the upload and download workflows
      * @returns a string which can be written to the file system
      */
     public toString(): string {

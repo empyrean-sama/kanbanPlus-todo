@@ -1,10 +1,12 @@
 import React, { createContext, ReactNode, useState } from 'react';
-import IProject from '../../interface/IProject';
+import IProject, { IParsedProject } from '../../interface/IProject';
 import { getCardsAPIVersion } from '../../utilities/cardsAPIUtils';
 import { cloneDeep } from 'lodash';
 import IBoard from '../../interface/IBoard';
-import ICard, { getDefaultCardProperties, ICardProperties } from '../../interface/ICard';
+import ICard, { getDefaultCardProperties, ICardProperties, IParsedDateTime, IParsedTime } from '../../interface/ICard';
 import { v4 as uuidV4 } from 'uuid'
+import { KanbanDateTime } from '../ui/DateTimePicker';
+import KanbanTime from '../ui/class/KanbanTime';
 
 export interface IProjectAPI {
     /** 
@@ -114,8 +116,18 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
     const onReplaceBoardCallbacks: Array<(oldBoardId: string, newBoardId: string) => void> = [];
     
     function loadProject(projectString: string) {
-        const project: IProject = JSON.parse(projectString) as IProject;
-        setProject(project);
+        const project: IParsedProject = JSON.parse(projectString) as IParsedProject;
+        for(const board of project.boards) {
+            for(let j=0; j<board.cards.length; j++) {
+                const createdDate: IParsedDateTime = board.cards[j].createdDate as IParsedDateTime;
+                const dueDate: IParsedDateTime = board.cards[j].dueDate as IParsedDateTime;
+                const estimatedTime: IParsedTime = board.cards[j].estimatedTime as IParsedTime;
+                board.cards[j].createdDate   = new KanbanDateTime(createdDate._day, createdDate._month, createdDate._year, createdDate._hour, createdDate._minute, createdDate._isAm);
+                board.cards[j].dueDate       = new KanbanDateTime(dueDate._day, dueDate._month, dueDate._year, dueDate._hour, dueDate._minute, dueDate._isAm);
+                board.cards[j].estimatedTime = new KanbanTime(estimatedTime._days, estimatedTime._hours, estimatedTime._minutes);
+            }
+        }
+        setProject(project as IProject);
     }
 
     function serializeProject(name?: string): IProject {
