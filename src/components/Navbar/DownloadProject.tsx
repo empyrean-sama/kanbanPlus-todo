@@ -34,7 +34,7 @@ export default function DownloadProject() {
 
     function onSuccess() {
         const projectFile = projectAPI.serializeProject(inputValue);
-        projectFile.boards = projectFile.boards.filter((boardName) => !selectedBoards.find((selectedBoardName) => selectedBoardName === boardName.name))
+        projectFile.boards = projectFile.boards.filter((boardName) => selectedBoards.find((selectedBoardName) => selectedBoardName === boardName.name))
 
         download(`${inputValue}.json`, JSON.stringify(projectFile));
         setIsOpen(false);

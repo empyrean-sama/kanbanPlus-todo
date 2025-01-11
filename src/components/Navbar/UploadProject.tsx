@@ -6,13 +6,11 @@ import { navbarContext, INavbarContext } from './Navbar';
 import { FaUpload } from "react-icons/fa6";
 import { EMessageType, IMessageService, messageServiceContext } from '../Message/MessageService';
 
-import IProject from '../../interface/IProject';
-import { boardAPIContext, IBoardAPI } from '../CardsAPI/BoardAPI';
 import { IProjectAPI, projectAPIContext } from '../CardsAPI/ProjectAPI';
 
 export default function UploadProject() {
     const { showMessage } = useContext(messageServiceContext) as IMessageService;
-    const { getAllBoardIDsInProject, clearBoards, addNewBoard } = useContext(projectAPIContext) as IProjectAPI;
+    const { getAllBoardIDsInProject, loadProject } = useContext(projectAPIContext) as IProjectAPI;
     const { clearDropdownActiveChild } = useContext(navbarContext) as INavbarContext;
     const [ modalOpen, setModalOpen ] = useState(false);
 
@@ -47,11 +45,8 @@ export default function UploadProject() {
             const file = this.files.item(0) as File
             const text = await file.text();
             try{
-                const project: IProject = JSON.parse(text) as IProject;
-                const boards = project.boards.map((board) => board.name);
-                clearBoards();
+                loadProject(text);
                 clearDropdownActiveChild();
-                boards.forEach((board) => addNewBoard(board));
             }
             catch{
                 showMessage('Failed To Load Project', 'Unable to parse the selected project file, looks like corruption.', EMessageType.danger);

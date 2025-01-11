@@ -68,7 +68,7 @@ export interface IProjectAPI {
 
     /**
      * Utility method to get all cards inside the project
-     * @param boardName is an optional parameter, if UNDEFINED will get ALL the CARDS in the ENTIRE PROJECT
+     * @param boardName is an optional parameter, if the passed in parameter can be coerced to FALSE, will get ALL the CARDS in the ENTIRE PROJECT
      * @returns a list of cards as an array
      */
     getCards(boardName?: string): Array<ICard>,
@@ -113,8 +113,9 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
     const onDeleteBoardCallbacks:  Array<(boardIdDeleted: string) => void> = [];
     const onReplaceBoardCallbacks: Array<(oldBoardId: string, newBoardId: string) => void> = [];
     
-    function loadProject(project: string) {
-
+    function loadProject(projectString: string) {
+        const project: IProject = JSON.parse(projectString) as IProject;
+        setProject(project);
     }
 
     function serializeProject(name?: string): IProject {

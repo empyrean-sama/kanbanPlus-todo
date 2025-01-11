@@ -26,7 +26,8 @@ export interface IBoardAPI {
 
     /**
      * Get all cards on the board
-     * @returns an array containing all the cards
+     * ? Can be an empty array if no board is selected 
+     * @returns an array containing all the cards on this board
      */
     getCards(): Array<ICard>,
 
@@ -71,7 +72,7 @@ export default function BoardAPI({children}: {children: ReactNode}) {
     }
 
     function getCards(): Array<ICard> {
-        return projectAPI.getCards(currentBoardId);
+        return projectAPI.getCards(currentBoardId || "no board selected");
     }
 
     function addCard(cardProperties?: ICardProperties): string {
