@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, PropsWithChildren, ReactNode, useContext, useState, useImperativeHandle, forwardRef } from "react"
+import React, { HTMLAttributes, PropsWithChildren, ReactNode, useContext, useState, useImperativeHandle, forwardRef, useRef } from "react"
 import { FaAngleDown, FaAngleUp } from "react-icons/fa6";
 import Style from './Dropdown.module.scss';
 
@@ -50,6 +50,12 @@ export interface IDropdownProps {
      * @returns nothing
      */
     onSelect?: (newSelectedId: string) => void 
+
+    /**
+     * This flag controls if the dropdown is closed automatically once the input looses focus
+     * ? The default value is true if undefined or null.
+     */
+    closeOnLoosingFocus?: boolean
 }
 
 export interface IDropdownContext {
@@ -66,10 +72,21 @@ export interface IDropdownImperativeHandle {
     getActiveChildId(): string
 }
 
-export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<IDropdownProps>>(function({placeholder, id, labelId, initialActiveId, spanFullWidth, canContentSpanFullWidth, onSelect, disabled, children}, ref) {
+export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<IDropdownProps>>(function({placeholder, id, labelId, initialActiveId, spanFullWidth, canContentSpanFullWidth, onSelect, disabled, closeOnLoosingFocus, children}, ref) {
 
     const [isOpen, setIsOpen] = useState(false);
     const [activeChildId, setActiveChildId] = useState(initialActiveId || "");
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    //false is an acceptable value, undefined or null is not
+    if(closeOnLoosingFocus === null || closeOnLoosingFocus === undefined) {
+        closeOnLoosingFocus = true;
+    }
+    const handleFocusLost = closeOnLoosingFocus ? function handleFocusLost(ev: React.FocusEvent<HTMLDivElement>) {
+        if(!ev.relatedTarget || !containerRef.current?.contains(ev.relatedTarget)) {
+            closeDropdown();
+        }
+    } : undefined;
 
     if(canContentSpanFullWidth === undefined || canContentSpanFullWidth === null) {
         canContentSpanFullWidth = spanFullWidth;
@@ -96,7 +113,12 @@ export const Dropdown = forwardRef<IDropdownImperativeHandle, PropsWithChildren<
     const ArrowComponent = isOpen ? FaAngleUp : FaAngleDown;
 
     return(
-        <div className={`dropdown ${isOpen ? 'is-active' : ''} ${spanFullWidth ? Style['spanFullWidth'] : ''}`} id={id? id: undefined}>
+        <div    
+            id={id? id: undefined} 
+            className={`dropdown ${isOpen ? 'is-active' : ''} ${spanFullWidth ? Style['spanFullWidth'] : ''}`} 
+            onBlur={handleFocusLost}
+            ref={containerRef}
+        >
             <div className={`dropdown-trigger ${spanFullWidth ? Style['spanFullWidth'] : ''}`}>
                 <button disabled={disabled} className={`button ${Style['dropdown-button']} ${spanFullWidth ? Style['spanFullWidth'] : ''}`} id={labelId} aria-haspopup="true" onClick={() => setIsOpen((prevState) => !prevState)}>
                     <span className="mr-2">{activeChildId ? activeChildId : placeholder}</span>
@@ -124,7 +146,7 @@ export function DropdownItem({id, selectable, children, className}: {id: string,
     }
     if(selectable) {
         return(
-            <a id={id} className={className} onClick={() => {
+            <a id={id} tabIndex={0} className={className} onClick={() => {
                 setActiveChildId(id);
                 closeDropdown();
                 if(onSelect && activeChildId !== id) {

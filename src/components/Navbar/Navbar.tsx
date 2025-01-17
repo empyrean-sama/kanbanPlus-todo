@@ -54,7 +54,7 @@ export default function Navbar({...navAttributes}: HTMLAttributes<HTMLElement>) 
                         
                     </div>
                     <div className={`${Style["navbar-middle"]}`}>
-                        <Dropdown placeholder='Select A Board To View' ref={boardsDropdownRef} id="board-selection-dropdown" onSelect={handleNewBoardSelected}>
+                        <Dropdown placeholder='Select A Board To View' closeOnLoosingFocus={false} ref={boardsDropdownRef} id="board-selection-dropdown" onSelect={handleNewBoardSelected}>
                             {projectAPI.getAllBoardIDsInProject().map((id) => <BoardDropdownItem id={id} key={`board dropdown item ${id}`} />)}
                             <DropdownDivider />
                             <CreateNewBoard />
