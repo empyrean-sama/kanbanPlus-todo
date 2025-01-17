@@ -9,10 +9,13 @@ import { FaCircleCheck } from "react-icons/fa6";
 
 import Style from './BoardDropdownItem.module.scss';
 import { IProjectAPI, projectAPIContext } from '../CardsAPI/ProjectAPI';
+import { boardAPIContext, IBoardAPI } from '../CardsAPI/BoardAPI';
 
 export default function BoardDropdownItem({id}: {id: string}) {
 
     const { modifyBoardId, deleteBoard} = useContext(projectAPIContext) as IProjectAPI;
+    const boardAPI = useContext(boardAPIContext) as IBoardAPI;
+
     const [isEditable, setIsEditable] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [inputInError, setInputInError] = useState(false);
@@ -39,6 +42,7 @@ export default function BoardDropdownItem({id}: {id: string}) {
         if(success) {
             setIsEditable(false);
             setInputInError(false);
+            boardAPI.setCurrentWorkingBoard(inputValue);
         }
         else {
             setInputInError(true);

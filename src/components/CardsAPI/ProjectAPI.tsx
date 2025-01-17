@@ -160,7 +160,7 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
     }
 
     function modifyBoardId(id: string, newId: string): boolean {
-        const foundBoardWithSameId = project.boards.find((board: IBoard) => board.name === newId)
+        const foundBoardWithSameId: boolean = (project.boards.findIndex((board: IBoard) => board.name === newId) !== -1) 
         if(!foundBoardWithSameId) {
             setProject((prevState) => {
                 const newState = cloneDeep(prevState);
