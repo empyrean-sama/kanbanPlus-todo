@@ -27,6 +27,16 @@ export default class KanbanTime {
     }
 
     /**
+     * Converts this object into a number with the units hours
+     * @returns the number of hours this object represents
+     */
+    public toHours(): number {
+        return (
+            (this._days * 24) + this._hours + (this._minutes / 60) 
+        );
+    }
+
+    /**
      * Converts this object into a string to be stored on the file system 
      * @returns a string which can be written to the file system
      */

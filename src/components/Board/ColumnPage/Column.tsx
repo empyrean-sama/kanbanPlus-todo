@@ -3,6 +3,8 @@ import Style from './Column.module.scss';
 
 import { boardComponentContext, IBoardComponentContext } from '../Board';
 import ECardState from '../../../Enum/ECardState';
+import { boardAPIContext, IBoardAPI } from '../../CardsAPI/BoardAPI';
+import ICard, { ITimeEntry } from '../../../interface/ICard';
 
 export interface IColumnProps extends HTMLAttributes<HTMLDivElement> {
     title: string,
@@ -17,6 +19,7 @@ export interface IColumnProps extends HTMLAttributes<HTMLDivElement> {
  */
 export default function Column({title, associatedState, className, children, ...htmlAttributes}: PropsWithChildren<IColumnProps>) {
     const customClassName = className || "";
+    const boardAPI = useContext(boardAPIContext) as IBoardAPI; 
     const boardContextAPI = useContext(boardComponentContext) as IBoardComponentContext;
     
     function handleDrop(ev: React.DragEvent<HTMLDivElement>) {
@@ -29,6 +32,10 @@ export default function Column({title, associatedState, className, children, ...
         ev.preventDefault();
     }
 
+    const cardsOnColumn =  boardAPI.getCards().filter((card: ICard) => card.state.toLowerCase() === title.toLowerCase());
+    const calculateTimeSpent = (timeSpentEntries: ITimeEntry[]) => timeSpentEntries.reduce((sum, entry) => sum += entry.duration.toHours(), 0);
+    const remainingTime = cardsOnColumn.reduce((sum, card) => (card.estimatedTime.toHours() - calculateTimeSpent(card.timeSpentEntries)) + sum, 0);
+
     return(
         <div
             className={`column ${Style['column']} ${customClassName}`}
@@ -36,7 +43,7 @@ export default function Column({title, associatedState, className, children, ...
             onDrop={(ev) => handleDrop(ev)}
             onDragOver={(ev) => handleDragOver(ev)}
         >
-            <div className={`${Style['title']} is-size-4 `}>{title}</div>
+            <div className={`${Style['title']} is-size-4 `}>{title} ({remainingTime}hrs)</div>
             <div className={`${Style['cards']}`}>
                 {children}
             </div>

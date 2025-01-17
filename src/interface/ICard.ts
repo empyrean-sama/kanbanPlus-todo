@@ -20,11 +20,8 @@ export interface IParsedTime {
 }
 
 export interface ITimeEntry {
-    /** Entry is expected to be something like 12 DEC 2024 8:30am to 12 Dec 2024 9:30am */
-    durationString: string,
-
-    /** The duration time is in HOURS */
-    durationTime: number
+    when: KanbanDateTime,
+    duration: KanbanTime
 }
 
 interface IUuid {
