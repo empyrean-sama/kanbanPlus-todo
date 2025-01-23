@@ -4,7 +4,7 @@ import Style from './Column.module.scss';
 import { boardComponentContext, IBoardComponentContext } from '../Board';
 import ECardState from '../../../Enum/ECardState';
 import { boardAPIContext, IBoardAPI } from '../../CardsAPI/BoardAPI';
-import ICard, { ITimeEntry } from '../../../interface/ICard';
+import ICard from '../../../interface/ICard';
 
 export interface IColumnProps extends HTMLAttributes<HTMLDivElement> {
     title: string,
@@ -32,9 +32,15 @@ export default function Column({title, associatedState, className, children, ...
         ev.preventDefault();
     }
 
+    function hoursToHHMM(hours: number) {
+        let h = String(Math.trunc(hours));//.padStart(2, '0');
+        let m = String(Math.abs(Math.round((hours - parseInt(h)) * 60))).padStart(2, '0');
+        return h + ':' + m;
+    }
+
     const cardsOnColumn =  boardAPI.getCards().filter((card: ICard) => card.state.toLowerCase() === title.toLowerCase());
-    const calculateTimeSpent = (timeSpentEntries: ITimeEntry[]) => timeSpentEntries.reduce((sum, entry) => sum += entry.duration.toHours(), 0);
-    const remainingTime = cardsOnColumn.reduce((sum, card) => (card.estimatedTime.toHours() - calculateTimeSpent(card.timeSpentEntries)) + sum, 0);
+    const remainingHours = cardsOnColumn.reduce((sum, card) => (card.estimatedTime.toHours() - card.timeSpent.toHours()) + sum, 0);
+    const timeString = hoursToHHMM(remainingHours);
 
     return(
         <div
@@ -43,7 +49,10 @@ export default function Column({title, associatedState, className, children, ...
             onDrop={(ev) => handleDrop(ev)}
             onDragOver={(ev) => handleDragOver(ev)}
         >
-            <div className={`${Style['title']} is-size-4 `}>{title} ({remainingTime}hrs)</div>
+            <div className={`${Style['title']} is-size-4`}>
+                <span>{title}</span>
+                <span className={`${(remainingHours >= 0) ? Style['color-success'] : Style['color-danger']}`}>({timeString})</span>
+            </div>
             <div className={`${Style['cards']}`}>
                 {children}
             </div>

@@ -70,7 +70,7 @@ export default function Fields() {
                 <LabeledDateTimePicker id="filed-date-edit-page" selectTime={true} label="filed date" value={editCard.createdDate} disabled  />
                 <LabeledDateTimePicker id="due-date-edit-page" selectTime={true} label="due date" value={editCard.dueDate} onChange={handleDueDateSelected} />
                 <LabeledTimePicker id="estimated-time-edit-page" label="estimated time" selectDays={true} value={editCard.estimatedTime} onChange={(newTime) => editPageAPI.setProperties((editCard) => editCard.estimatedTime = newTime)} />
-                <LabeledTimePicker id="time-elapsed-edit-page" disabled label="elapsed time" selectDays={true} />
+                <LabeledTimePicker id="time-elapsed-edit-page" label="elapsed time" selectDays={true} value={editCard.timeSpent} disabled />
             </LabeledGrid>
         </section>
     );

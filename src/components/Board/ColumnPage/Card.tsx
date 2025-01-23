@@ -1,12 +1,28 @@
-import React, { useContext } from 'react';
+import React, { createContext, useContext } from 'react';
 import Style from './Card.module.scss';
 import Button, { EButtonFace } from '../../ui/Button';
 
-import { FaLink, FaPlay, FaStop, FaPenToSquare, FaTrashCan, FaBug, FaListCheck  } from "react-icons/fa6";
+import { FaLink, FaPenToSquare, FaTrashCan, FaBug, FaListCheck  } from "react-icons/fa6";
 import { ECardType } from '../../../Enum/ECardType';
 import { boardComponentContext, IBoardComponentContext } from '../Board';
-import ICard from '../../../interface/ICard';
+import ICard, { ICardProperties } from '../../../interface/ICard';
 import { ISelectSetAPI, selectSetAPIContext } from '../../CardsAPI/SelectSetAPI';
+import CardTimerButton from './CardTimerButton';
+
+export interface ICardComponentAPI {
+    /**
+     * Get the uuid of this card
+     * @returns the uuid of this card as a string
+     */
+    getUUID(): string,
+    
+    /**
+     * Get the properties of this card
+     * @returns the card properties of this card
+     */
+    getCardProperties(): ICardProperties
+}
+export const cardComponentContext = createContext<ICardComponentAPI | undefined>(undefined); 
 
 export default function Card(props: ICard) {
 
@@ -36,37 +52,47 @@ export default function Card(props: ICard) {
             break;
     }
 
+    function getUUID(): string {
+        return props.uuid;
+    }
+
+    function getCardProperties(): ICardProperties {
+        return props;
+    }
+
     return(
-        <div 
-            id={props.uuid}
-            className={`card ${Style['card']} ${Style[`card-${props.type}`]} is-primary`} 
-            draggable="true" 
-            onDragStart={(ev) => handleDragStart(ev)} 
-        >
-            <header className={`${Style['card-header']} card-header`}>
-                <p className={`card-header-title ${Style['card-header-title']}`}>
-                    <span className={`${Style['card-header-title-left']}`}>
-                        {cardTypeIconComponent}
-                        {props.title} 
-                    </span>
-                    <FaTrashCan className={`${Style['icon']} ${Style['danger-icon']}`} />
-                </p>
-            </header>
-            <div className={`${Style['card-content']} card-content`}>
-                <div className={`${Style['content']} content`}>
-                    <div className={Style['tags']}>
-                        <span className="tag is-warning">Story Points: {props.storyPoints}</span>
-                    </div>
-                    <div className={`${Style['description-text']}`}>
-                        {props.description}
+        <cardComponentContext.Provider value={{getUUID, getCardProperties}} >
+            <div 
+                id={props.uuid}
+                className={`card ${Style['card']} ${Style[`card-${props.type}`]} is-primary`} 
+                draggable="true" 
+                onDragStart={(ev) => handleDragStart(ev)} 
+            >
+                <header className={`${Style['card-header']} card-header`}>
+                    <p className={`card-header-title ${Style['card-header-title']}`}>
+                        <span className={`${Style['card-header-title-left']}`}>
+                            {cardTypeIconComponent}
+                            {props.title} 
+                        </span>
+                        <FaTrashCan className={`${Style['icon']} ${Style['danger-icon']}`} />
+                    </p>
+                </header>
+                <div className={`${Style['card-content']} card-content`}>
+                    <div className={`${Style['content']} content`}>
+                        <div className={Style['tags']}>
+                            <span className="tag is-warning">Story Points: {props.storyPoints}</span>
+                        </div>
+                        <div className={`${Style['description-text']}`}>
+                            {props.description}
+                        </div>
                     </div>
                 </div>
+                <footer className="card-footer">
+                    <Button face={EButtonFace.link} className={`card-footer-item ${Style['card-button']} ${Style['links-button']}`} disabled>Links(0)<FaLink width="16" /></Button>
+                    <CardTimerButton />
+                    <Button onClick={onEditClicked} face={EButtonFace.link} className={`card-footer-item ${Style['card-button']} ${Style['edit-button']}`}>Edit <FaPenToSquare width="16"/></Button>
+                </footer>
             </div>
-            <footer className="card-footer">
-                <Button face={EButtonFace.link} className={`card-footer-item ${Style['card-button']} ${Style['links-button']}`} disabled>Links(0)<FaLink width="16" /></Button>
-                <Button face={EButtonFace.primary} className={`card-footer-item ${Style['card-button']} ${Style['timer-button']}`} disabled>0min<FaPlay width="16"/></Button>
-                <Button onClick={onEditClicked} face={EButtonFace.link} className={`card-footer-item ${Style['card-button']} ${Style['edit-button']}`}>Edit <FaPenToSquare width="16"/></Button>
-            </footer>
-        </div>
+        </cardComponentContext.Provider>
     );
 }

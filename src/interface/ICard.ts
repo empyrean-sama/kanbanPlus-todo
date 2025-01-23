@@ -19,11 +19,6 @@ export interface IParsedTime {
     _minutes: number
 }
 
-export interface ITimeEntry {
-    when: KanbanDateTime,
-    duration: KanbanTime
-}
-
 interface IUuid {
     uuid: string,
 }
@@ -33,14 +28,14 @@ export interface ICardAbsoluteProperties {
     title: string,
     description: string,
     state: ECardState,
-    storyPoints: number,
-    timeSpentEntries: Array<ITimeEntry>
+    storyPoints: number
 }
 
 export interface ICardTimeProperties {
     createdDate: KanbanDateTime,
     dueDate: KanbanDateTime,
     estimatedTime: KanbanTime,
+    timeSpent: KanbanTime
 }
 export interface ICardProperties extends ICardAbsoluteProperties, ICardTimeProperties {}
 
@@ -48,6 +43,7 @@ export interface IParsedCardTimeProperties {
     createdDate: IParsedDateTime | KanbanDateTime,
     dueDate: IParsedDateTime | KanbanDateTime,
     estimatedTime: IParsedTime | KanbanTime,
+    timeSpent: IParsedTime | KanbanTime
 }
 
 export default interface ICard extends IUuid, ICardProperties {}
@@ -63,6 +59,6 @@ export function getDefaultCardProperties(): ICardProperties {
         dueDate: new KanbanDateTime(),
         storyPoints: 0,
         estimatedTime: new KanbanTime(),
-        timeSpentEntries: []
+        timeSpent: new KanbanTime()
     };
 }

@@ -1,0 +1,10 @@
+.button {
+    display: flex;
+    column-gap: var(--spacing-01);
+    align-items: center;
+    border-radius: 0;
+}
+
+.minor-margin-top {
+    margin-top: 1px;
+}

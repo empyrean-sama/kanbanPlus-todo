@@ -107,6 +107,16 @@ export interface IProjectAPI {
      * @param boardNames: this is an optional prop, will narrow search to only a specific board if this prop is provided
      */
     modifyCard(uuid: string, cardData: ICardProperties, boardNames?: Array<string>): void,
+
+    /**
+     * Modifies properties of an existing card in the project
+     * ? This function is synonymous with the modifyCard function, can use whichever syntax is good for the occasion
+     * todo: the boardNames optional parameter is currently not doing anything, see if some optimization can be done using it
+     * @param uuid: the uuid of the card to be modified
+     * @param modifyCardDataFunc: this callback can be used to actually modify the card data
+     * @param boardNames: this is an optional prop, will narrow search to only a specific board if this prop is provided 
+     */
+    modifyCardProperties(uuid: string, modifyCardDataFunc: (cardDataToModify: ICardProperties) => void, boardNames?: Array<string>): void
 }
 export const projectAPIContext = createContext<IProjectAPI | undefined>(undefined);
 
@@ -122,9 +132,11 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
                 const createdDate: IParsedDateTime = board.cards[j].createdDate as IParsedDateTime;
                 const dueDate: IParsedDateTime = board.cards[j].dueDate as IParsedDateTime;
                 const estimatedTime: IParsedTime = board.cards[j].estimatedTime as IParsedTime;
+                const timeSpent: IParsedTime = board.cards[j].timeSpent as IParsedTime;
                 board.cards[j].createdDate   = new KanbanDateTime(createdDate._day, createdDate._month, createdDate._year, createdDate._hour, createdDate._minute, createdDate._isAm);
                 board.cards[j].dueDate       = new KanbanDateTime(dueDate._day, dueDate._month, dueDate._year, dueDate._hour, dueDate._minute, dueDate._isAm);
                 board.cards[j].estimatedTime = new KanbanTime(estimatedTime._days, estimatedTime._hours, estimatedTime._minutes);
+                board.cards[j].timeSpent = new KanbanTime(timeSpent._days, timeSpent._hours, timeSpent._minutes);
             }
         }
         setProject(project as IProject);
@@ -287,12 +299,26 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
         });
     }
 
+    function modifyCardProperties(uuid: string, modifyCardDataFunc: (cardDataToModify: ICardProperties) => void, boardNames?: Array<string>): void {
+        setProject((prevState) => {
+            const newState = cloneDeep(prevState);
+            for(let i=0; i < newState.boards.length; i++) {
+                for(let j=0; j < newState.boards[i].cards.length; j++) {
+                    if(newState.boards[i].cards[j].uuid === uuid) {
+                        modifyCardDataFunc(newState.boards[i].cards[j])
+                    }
+                }
+            }
+            return newState;
+        });
+    }
+
     return(
         <projectAPIContext.Provider value={
             {
                 loadProject, serializeProject,
                 getAllBoardIDsInProject, addNewBoard, modifyBoardId, clearBoards, deleteBoard, onModifyBoardId, onDeleteBoard,
-                getCards, addCard, moveCard, setCards, modifyCard
+                getCards, addCard, moveCard, setCards, modifyCard, modifyCardProperties
             }
         }>
             {children}

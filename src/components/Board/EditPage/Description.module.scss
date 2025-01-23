@@ -1,6 +1,7 @@
 .description-container {
-    margin: 0 var(--spacing-04);
+    margin-left: var(--spacing-04);
     width: calc(50% - var(--spacing-04));
+    min-width: calc(25rem + 86.82px + var(--spacing-02));
 
     display: flex;
     flex-direction: column;
