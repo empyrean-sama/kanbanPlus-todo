@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { forwardRef, useContext, useImperativeHandle, useState } from "react";
 import Style from './CardTimerButton.module.scss';
 
 import Button, { EButtonFace } from '../../ui/Button';
@@ -9,7 +9,14 @@ import { cardComponentContext, ICardComponentAPI } from "./Card";
 import { ICardProperties } from "../../../interface/ICard";
 import KanbanTime from "../../ui/class/KanbanTime";
 
-export default function CardTimerButton() {
+export interface ICardTimerButtonImperativeHandler {
+    /**
+     * Utility method to stop the timer in a proper way if it is running
+     */
+    handleReset(): void
+}
+
+const CardTimerButton = forwardRef<ICardTimerButtonImperativeHandler>(function({}, ref) {
     const {
         totalSeconds,
         seconds,
@@ -25,11 +32,17 @@ export default function CardTimerButton() {
     const cardComponentAPI = useContext(cardComponentContext) as ICardComponentAPI;
 
     function handleReset() {
-       reset(new Date(0), false);
-       projectAPI.modifyCardProperties(cardComponentAPI.getUUID(), (cardData: ICardProperties) => {
+        reset(new Date(0), false);
+        projectAPI.modifyCardProperties(cardComponentAPI.getUUID(), (cardData: ICardProperties) => {
             cardData.timeSpent.add(new KanbanTime(days,hours, minutes));
         });
     }
+
+    useImperativeHandle(ref, () => {
+        return {
+            handleReset
+        }
+    });
 
     const buttonFace = isRunning ? EButtonFace.danger : EButtonFace.primary;
     const buttonIcon = isRunning ? <FaStop className={Style['minor-margin-top']} width={16} /> : <FaPlay className={Style['minor-margin-top']} width={16} />
@@ -49,4 +62,5 @@ export default function CardTimerButton() {
                 </span>
             </Button>
     );
-}
+});
+export default CardTimerButton;

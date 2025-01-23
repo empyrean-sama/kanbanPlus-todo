@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useRef } from 'react';
 import Style from './Card.module.scss';
 import Button, { EButtonFace } from '../../ui/Button';
 
@@ -7,7 +7,7 @@ import { ECardType } from '../../../Enum/ECardType';
 import { boardComponentContext, IBoardComponentContext } from '../Board';
 import ICard, { ICardProperties } from '../../../interface/ICard';
 import { ISelectSetAPI, selectSetAPIContext } from '../../CardsAPI/SelectSetAPI';
-import CardTimerButton from './CardTimerButton';
+import CardTimerButton, { ICardTimerButtonImperativeHandler } from './CardTimerButton';
 
 export interface ICardComponentAPI {
     /**
@@ -28,10 +28,12 @@ export default function Card(props: ICard) {
 
     const selectSetAPI = useContext(selectSetAPIContext) as ISelectSetAPI
     const { openEditPage } = useContext(boardComponentContext) as IBoardComponentContext;
+    const timerButtonRef = useRef<ICardTimerButtonImperativeHandler | null>(null);
 
     function handleDragStart(ev: React.DragEvent<HTMLDivElement>) {
         const element = ev.target as HTMLDivElement;
         ev.dataTransfer.setData('text/plain', element.id);
+        timerButtonRef.current?.handleReset();
     }
 
     function onEditClicked() {
@@ -89,7 +91,7 @@ export default function Card(props: ICard) {
                 </div>
                 <footer className="card-footer">
                     <Button face={EButtonFace.link} className={`card-footer-item ${Style['card-button']} ${Style['links-button']}`} disabled>Links(0)<FaLink width="16" /></Button>
-                    <CardTimerButton />
+                    <CardTimerButton ref={timerButtonRef}/>
                     <Button onClick={onEditClicked} face={EButtonFace.link} className={`card-footer-item ${Style['card-button']} ${Style['edit-button']}`}>Edit <FaPenToSquare width="16"/></Button>
                 </footer>
             </div>
