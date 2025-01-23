@@ -37,6 +37,24 @@ export default class KanbanTime {
     }
 
     /**
+     * Utility to add two KanbanTime objects together
+     * @param rhs: the KanbanTime object to add into this
+     * @returns this for easy chaining operation
+     */
+    public add(rhs: KanbanTime): KanbanTime {
+        this._minutes += rhs._minutes;
+        const minutesCarry = Math.trunc(this._minutes / 60);
+        this._minutes = this._minutes % 60;
+
+        this._hours += (rhs._hours + minutesCarry);
+        const hoursCarry = Math.trunc(this._hours / 24);
+        this._hours = this._hours % 60;
+
+        this._days += rhs._days + hoursCarry;
+        return this;
+    }
+
+    /**
      * Converts this object into a string to be stored on the file system 
      * @returns a string which can be written to the file system
      */

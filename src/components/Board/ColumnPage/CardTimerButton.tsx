@@ -21,46 +21,31 @@ export default function CardTimerButton() {
         pause,
         reset,
     } = useStopwatch({ autoStart: false });
-    const [startState, setStartState] = useState(false); 
     const projectAPI = useContext(projectAPIContext) as IProjectAPI;
     const cardComponentAPI = useContext(cardComponentContext) as ICardComponentAPI;
 
-    function handleButtonClick() {
-        setStartState((prevState) => {
-            if(prevState === false) {
-                //Start the timer
-                start();
-                return true;
-            }
-            else {
-                //Stop the timer and update the timeSpent
-                pause();
-                projectAPI.modifyCardProperties(cardComponentAPI.getUUID(), (cardData: ICardProperties) => {
-                    const totalHoursSpent = hours + cardComponentAPI.getCardProperties().timeSpent.toHours();
-                    const daysSpent = Math.trunc(totalHoursSpent / 24);
-                    const hoursSpent = totalHoursSpent - (daysSpent * 24);
-                    const minutesSpent = minutes + cardComponentAPI.getCardProperties().timeSpent.getMinutes(); //todo: what if the sum exceeds 59?
-                    cardData.timeSpent = new KanbanTime(daysSpent, hoursSpent, minutesSpent);
-                });
-                reset();
-                return false;
-            }
+    function handleReset() {
+       reset(new Date(0), false);
+       projectAPI.modifyCardProperties(cardComponentAPI.getUUID(), (cardData: ICardProperties) => {
+            cardData.timeSpent.add(new KanbanTime(days,hours, minutes));
         });
     }
 
-    const buttonFace = startState ? EButtonFace.danger : EButtonFace.primary;
-    const buttonIcon = startState ? <FaStop className={Style['minor-margin-top']} width={16} /> : <FaPlay className={Style['minor-margin-top']} width={16} />
+    const buttonFace = isRunning ? EButtonFace.danger : EButtonFace.primary;
+    const buttonIcon = isRunning ? <FaStop className={Style['minor-margin-top']} width={16} /> : <FaPlay className={Style['minor-margin-top']} width={16} />
+
+    const stopWatchNow = new KanbanTime(days, hours, minutes);
+    stopWatchNow.add(cardComponentAPI.getCardProperties().timeSpent);
 
     return (
         <Button 
             face={buttonFace} 
             className={`card-footer-item ${Style['button']}`}
-            onClick={handleButtonClick}
+            onClick={() => isRunning ? handleReset() : start()}
             >
                 {buttonIcon}
                 <span className={Style['time-display']}>
-                        {(hours   + cardComponentAPI.getCardProperties().timeSpent.getHours() + (cardComponentAPI.getCardProperties().timeSpent.getDays() * 24)).toString().padStart(2,'0')}:
-                        {(minutes + cardComponentAPI.getCardProperties().timeSpent.getMinutes()).toString().padStart(2,'0')}
+                    {((stopWatchNow.getDays() * 24) + stopWatchNow.getHours()).toString().padStart(2,'0')}:{stopWatchNow.getMinutes().toString().padStart(2,'0')}
                 </span>
             </Button>
     );
