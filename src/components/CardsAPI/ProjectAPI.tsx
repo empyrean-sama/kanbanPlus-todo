@@ -116,7 +116,15 @@ export interface IProjectAPI {
      * @param modifyCardDataFunc: this callback can be used to actually modify the card data
      * @param boardNames: this is an optional prop, will narrow search to only a specific board if this prop is provided 
      */
-    modifyCardProperties(uuid: string, modifyCardDataFunc: (cardDataToModify: ICardProperties) => void, boardNames?: Array<string>): void
+    modifyCardProperties(uuid: string, modifyCardDataFunc: (cardDataToModify: ICardProperties) => void, boardNames?: Array<string>): void,
+
+    /**
+     * Delete a card from this project
+     * todo: the boardNames optional parameter is currently not doing anything, see if some optimization can be done using it
+     * @param uuid: the uuid of the card to be deleted
+     * @param boardNames: this is an optional prop, will narrow search to only a specific board if this prop is provided 
+     */
+    deleteCard(uuid: string, boardNames?: Array<string>): void
 }
 export const projectAPIContext = createContext<IProjectAPI | undefined>(undefined);
 
@@ -313,12 +321,20 @@ export default function ProjectAPI({children}: {children: ReactNode}) {
         });
     }
 
+    function deleteCard(uuid: string, boardNames?: Array<string>): void {
+        setProject((prevState) => {
+            const newState = cloneDeep(prevState);
+            newState.boards.forEach((board: IBoard) => board.cards = board.cards.filter((card) => card.uuid !== uuid));
+            return newState;
+        });
+    }
+
     return(
         <projectAPIContext.Provider value={
             {
                 loadProject, serializeProject,
                 getAllBoardIDsInProject, addNewBoard, modifyBoardId, clearBoards, deleteBoard, onModifyBoardId, onDeleteBoard,
-                getCards, addCard, moveCard, setCards, modifyCard, modifyCardProperties
+                getCards, addCard, moveCard, setCards, modifyCard, modifyCardProperties, deleteCard
             }
         }>
             {children}
