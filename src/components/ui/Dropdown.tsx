@@ -159,7 +159,7 @@ export function DropdownItem({id, selectable, children, className}: {id: string,
     }
     else  {
         return (
-            <div id={id} className={className}>
+            <div id={id} tabIndex={0} className={className}>
                 {children}
             </div>
         );
