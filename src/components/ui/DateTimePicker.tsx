@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { ChangeEvent, createContext, useContext, useRef, useState } from "react";
 import Style from "./DateTimePicker.module.scss";
 import { Dropdown, DropdownDivider, DropdownItem } from "./Dropdown";
 import { DateTime, MonthNumbers } from "luxon";
@@ -39,7 +39,7 @@ function DateTimePlaceholder({date, time}: {date: string, time?: string}) {
     )
 }
 
-//todo: must design the archietecture such that IParsedDateTime gets automatically updated when changes are made to the KanbanDateTime
+//todo: must design the architecture such that IParsedDateTime gets automatically updated when changes are made to the KanbanDateTime
 export class KanbanDateTime {
 
     private _day:    number;
@@ -383,6 +383,7 @@ export default function DateTimePicker({id, selectTime, spanFullWidth, value, on
     
     const [dateTime, setDateTime] = useState(new KanbanDateTime());
     const [displayDateTime, setDisplayDateTime] = useState(DateTime.now());
+    const minuteFieldRef = useRef<HTMLInputElement>(null);
  
     function handleNextMonthClicked(ev: React.MouseEvent<HTMLButtonElement>) {
         setDisplayDateTime((prevState) => prevState.plus({month: 1}));
@@ -441,6 +442,24 @@ export default function DateTimePicker({id, selectTime, spanFullWidth, value, on
 
     function handleMinuteDecrease() {
         handleDateTimeChange((oldDateTime: KanbanDateTime) => oldDateTime.clone().setMinute((currentMinute: number) => Math.max(currentMinute - 1, 0) % 60));
+    }
+
+    function handleMinuteChange(ev: ChangeEvent<HTMLInputElement>) {
+        const value = parseInt(ev.target.value);
+        if(!Number.isNaN(value)) {
+            handleDateTimeChange((oldDateTime: KanbanDateTime) => oldDateTime.clone().setMinute((currentMinute: number) => (value) % 60));
+        }
+        else {
+            handleDateTimeChange((oldDateTime: KanbanDateTime) => oldDateTime.clone().setMinute((currentMinute: number) => (0) % 60));
+        }
+    }
+
+    function getMinute(): string {
+        let minute = getInternalDateTime().getMinute().toString(); 
+        if(!(document.activeElement === minuteFieldRef.current)) {
+            minute = minute.padStart(2, '0');
+        }
+        return minute;
     }
 
     function handleMeridiemChange() {
@@ -516,7 +535,12 @@ export default function DateTimePicker({id, selectTime, spanFullWidth, value, on
                         <span className={`${Style["hour-minute-separator"]}`}>:</span>
                         <div className={`${Style["minute-selector"]} ${Style["column"]}`}>
                             <Button face={EButtonFace.none} onClick={handleMinuteIncrease}><FaAngleUp /></Button>
-                            {getInternalDateTime().getMinute().toString().padStart(2,'0')}
+                            <input 
+                                className={`${Style['time-input']}`} 
+                                value={getMinute()} 
+                                onChange={handleMinuteChange}
+                                ref={minuteFieldRef}
+                            />
                             <Button face={EButtonFace.none} onClick={handleMinuteDecrease}><FaAngleDown /></Button>
                         </div>
                         <div className={`${Style["am-pm-selector"]} ${Style["column"]}`}>
