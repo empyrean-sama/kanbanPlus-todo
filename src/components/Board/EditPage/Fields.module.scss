@@ -1,6 +1,5 @@
 .field-section {
     display: flex;
-    margin: var(--spacing-04);
     column-gap: var(--spacing-04);
     & > * {
         flex: 1 1 50%;

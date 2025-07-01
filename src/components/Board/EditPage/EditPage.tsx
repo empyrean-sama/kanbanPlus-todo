@@ -87,8 +87,10 @@ export default function EditCard() {
         <editPageContext.Provider value={{getUUID, getProperties, setProperties, handleSave, handleClose}}>
             <div className={Style['fixed-full-page']}>
                 <Nav saveEnabled={saveEnabled} />
-                <Fields key={'fields'} />
-                <Description />
+                <div className={Style["page"]}>
+                    <Fields key={'fields'} />
+                    <Description />
+                </div>
             </div>
         </editPageContext.Provider>
     );
